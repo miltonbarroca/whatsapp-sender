@@ -1,28 +1,270 @@
-2025/10/15-08:47:49.223 2108 Reusing MANIFEST C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/10/15-08:47:49.224 2108 Recovering log #217
-2025/10/15-08:47:49.259 2108 Reusing old log C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000217.log 
-2025/10/15-08:47:49.260 2108 Delete type=2 #220
-2025/10/15-08:47:50.010 864 Compacting 1@0 + 4@1 files
-2025/10/15-08:47:50.097 864 Generated table #220@0: 163962 keys, 2334284 bytes
-2025/10/15-08:47:50.155 864 Generated table #221@0: 40009 keys, 2200796 bytes
-2025/10/15-08:47:50.203 864 Generated table #222@0: 29871 keys, 2193041 bytes
-2025/10/15-08:47:50.208 864 Generated table #223@0: 3537 keys, 69557 bytes
-2025/10/15-08:47:50.208 864 Compacted 1@0 + 4@1 files => 6797678 bytes
-2025/10/15-08:47:50.209 864 compacted to: files[ 0 5 1 0 0 0 0 ]
-2025/10/15-08:47:50.209 864 Delete type=2 #213
-2025/10/15-08:47:50.209 864 Delete type=2 #214
-2025/10/15-08:47:50.209 864 Delete type=2 #215
-2025/10/15-08:47:50.209 864 Delete type=2 #216
-2025/10/15-08:47:50.209 864 Delete type=2 #218
-2025/10/15-08:47:50.991 864 Level-0 table #225: started
-2025/10/15-08:47:51.004 864 Level-0 table #225: 654920 bytes OK
-2025/10/15-08:47:51.005 864 Delete type=0 #217
-2025/10/15-08:47:51.005 864 Manual compaction at level-0 from '\x00G\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00H\x00\x00\x00' @ 0 : 0; will stop at '\x00G\x00\x00\x05' @ 480439 : 1
-2025/10/15-08:47:51.005 864 Compacting 1@0 + 5@1 files
-2025/10/15-08:47:51.092 864 Generated table #226@0: 170589 keys, 2347228 bytes
-2025/10/15-08:47:51.131 864 Generated table #227@0: 28842 keys, 2184219 bytes
-2025/10/15-08:47:51.167 864 Generated table #228@0: 33099 keys, 1653453 bytes
-2025/10/15-08:47:51.167 864 Compacted 1@0 + 5@1 files => 6184900 bytes
-2025/10/15-08:47:51.168 864 compacted to: files[ 0 3 1 0 0 0 0 ]
-2025/10/15-08:47:51.168 864 Delete type=2 #225
-2025/10/15-08:47:51.169 864 Manual compaction at level-0 from '\x00G\x00\x00\x05' @ 480439 : 1 .. '\x00H\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/10/15-09:57:06.256 ec8 Reusing MANIFEST C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/10/15-09:57:06.257 ec8 Recovering log #322
+2025/10/15-09:57:06.267 ec8 Reusing old log C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000322.log 
+2025/10/15-09:57:07.953 15c Level-0 table #331: started
+2025/10/15-09:57:07.959 15c Level-0 table #331: 288124 bytes OK
+2025/10/15-09:57:07.959 15c Delete type=0 #322
+2025/10/15-09:57:07.960 3418 Manual compaction at level-0 from '\x00I\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00J\x00\x00\x00' @ 0 : 0; will stop at '\x00I\x00\x00\x05' @ 982728 : 1
+2025/10/15-09:57:07.960 3418 Compacting 1@0 + 2@1 files
+2025/10/15-09:57:07.988 3418 Generated table #332@0: 16820 keys, 2215174 bytes
+2025/10/15-09:57:08.017 3418 Generated table #333@0: 31259 keys, 2173845 bytes
+2025/10/15-09:57:08.020 3418 Generated table #334@0: 3909 keys, 82579 bytes
+2025/10/15-09:57:08.021 3418 Compacted 1@0 + 2@1 files => 4471598 bytes
+2025/10/15-09:57:08.021 3418 compacted to: files[ 0 3 2 0 0 0 0 ]
+2025/10/15-09:57:08.021 3418 Delete type=2 #331
+2025/10/15-09:57:08.022 3418 Manual compaction at level-0 from '\x00I\x00\x00\x05' @ 982728 : 1 .. '\x00J\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/10/15-09:57:09.195 37f0 Compacting 1@1 + 2@2 files
+2025/10/15-09:57:09.259 37f0 Generated table #335@1: 61411 keys, 2215168 bytes
+2025/10/15-09:57:09.287 37f0 Generated table #336@1: 27578 keys, 2177542 bytes
+2025/10/15-09:57:09.308 37f0 Generated table #337@1: 7413 keys, 1608891 bytes
+2025/10/15-09:57:09.308 37f0 Compacted 1@1 + 2@2 files => 6001601 bytes
+2025/10/15-09:57:09.308 37f0 compacted to: files[ 0 2 3 0 0 0 0 ]
+2025/10/15-09:57:09.308 37f0 Delete type=2 #325
+2025/10/15-09:57:09.309 37f0 Delete type=2 #326
+2025/10/15-09:57:09.309 37f0 Delete type=2 #327
+2025/10/15-09:57:09.309 37f0 Delete type=2 #328
+2025/10/15-09:57:09.309 37f0 Delete type=2 #332
+2025/10/15-09:57:16.934 ec8 Level-0 table #339: started
+2025/10/15-09:57:16.952 ec8 Level-0 table #339: 1187451 bytes OK
+2025/10/15-09:57:16.953 ec8 Delete type=0 #330
+2025/10/15-09:57:17.199 ec8 Compacting 1@0 + 2@1 files
+2025/10/15-09:57:17.237 ec8 Generated table #340@0: 38043 keys, 2184730 bytes
+2025/10/15-09:57:17.249 ec8 Generated table #341@0: 16932 keys, 444005 bytes
+2025/10/15-09:57:17.249 ec8 Compacted 1@0 + 2@1 files => 2628735 bytes
+2025/10/15-09:57:17.250 ec8 compacted to: files[ 0 2 3 0 0 0 0 ]
+2025/10/15-09:57:17.250 ec8 Delete type=2 #333
+2025/10/15-09:57:17.250 ec8 Delete type=2 #334
+2025/10/15-09:57:17.250 ec8 Delete type=2 #339
+2025/10/15-09:57:18.018 ec8 Compacting 1@1 + 3@2 files
+2025/10/15-09:57:18.067 ec8 Generated table #342@1: 62787 keys, 2219134 bytes
+2025/10/15-09:57:18.097 ec8 Generated table #343@1: 27958 keys, 2175879 bytes
+2025/10/15-09:57:18.124 ec8 Generated table #344@1: 20435 keys, 2197839 bytes
+2025/10/15-09:57:18.136 ec8 Generated table #345@1: 9297 keys, 1364317 bytes
+2025/10/15-09:57:18.136 ec8 Compacted 1@1 + 3@2 files => 7957169 bytes
+2025/10/15-09:57:18.136 ec8 compacted to: files[ 0 1 4 0 0 0 0 ]
+2025/10/15-09:57:18.136 ec8 Delete type=2 #335
+2025/10/15-09:57:18.136 ec8 Delete type=2 #336
+2025/10/15-09:57:18.136 ec8 Delete type=2 #337
+2025/10/15-09:57:18.136 ec8 Delete type=2 #340
+2025/10/15-09:57:20.624 ec8 Level-0 table #347: started
+2025/10/15-09:57:20.629 ec8 Level-0 table #347: 143461 bytes OK
+2025/10/15-09:57:20.630 ec8 Delete type=0 #338
+2025/10/15-09:57:20.630 37f0 Manual compaction at level-0 from '\x00J\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00K\x00\x00\x00' @ 0 : 0; will stop at '\x00J\x00\x00\x05' @ 1024754 : 1
+2025/10/15-09:57:20.631 37f0 Compacting 1@0 + 1@1 files
+2025/10/15-09:57:20.648 37f0 Generated table #348@0: 20832 keys, 526896 bytes
+2025/10/15-09:57:20.649 37f0 Compacted 1@0 + 1@1 files => 526896 bytes
+2025/10/15-09:57:20.649 37f0 compacted to: files[ 0 1 4 0 0 0 0 ]
+2025/10/15-09:57:20.650 37f0 Delete type=2 #347
+2025/10/15-09:57:20.650 15c Manual compaction at level-0 from '\x00J\x00\x00\x05' @ 1024754 : 1 .. '\x00K\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/10/15-09:57:21.890 ec8 Compacting 1@1 + 4@2 files
+2025/10/15-09:57:21.947 ec8 Generated table #349@1: 62847 keys, 2219124 bytes
+2025/10/15-09:57:21.977 ec8 Generated table #350@1: 28018 keys, 2177561 bytes
+2025/10/15-09:57:22.008 ec8 Generated table #351@1: 19954 keys, 2194977 bytes
+2025/10/15-09:57:22.031 ec8 Generated table #352@1: 28224 keys, 1857485 bytes
+2025/10/15-09:57:22.031 ec8 Compacted 1@1 + 4@2 files => 8449147 bytes
+2025/10/15-09:57:22.032 ec8 compacted to: files[ 0 0 4 0 0 0 0 ]
+2025/10/15-09:57:22.032 ec8 Delete type=2 #341
+2025/10/15-09:57:22.032 ec8 Delete type=2 #342
+2025/10/15-09:57:22.032 ec8 Delete type=2 #343
+2025/10/15-09:57:22.032 ec8 Delete type=2 #344
+2025/10/15-09:57:22.032 ec8 Delete type=2 #345
+2025/10/15-09:57:22.032 ec8 Delete type=2 #348
+2025/10/15-09:57:34.138 3418 Level-0 table #354: started
+2025/10/15-09:57:34.162 3418 Level-0 table #354: 937208 bytes OK
+2025/10/15-09:57:34.163 3418 Delete type=0 #346
+2025/10/15-09:57:34.164 3418 Manual compaction at level-0 from '\x00K\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00L\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/10/15-09:57:35.380 ec8 Compacting 1@1 + 4@2 files
+2025/10/15-09:57:35.434 ec8 Generated table #355@1: 63794 keys, 2219985 bytes
+2025/10/15-09:57:35.463 ec8 Generated table #356@1: 28432 keys, 2193100 bytes
+2025/10/15-09:57:35.492 ec8 Generated table #357@1: 19535 keys, 2196381 bytes
+2025/10/15-09:57:35.523 ec8 Generated table #358@1: 39008 keys, 2139797 bytes
+2025/10/15-09:57:35.524 ec8 Compacted 1@1 + 4@2 files => 8749263 bytes
+2025/10/15-09:57:35.524 ec8 compacted to: files[ 0 0 4 0 0 0 0 ]
+2025/10/15-09:57:35.524 ec8 Delete type=2 #349
+2025/10/15-09:57:35.524 ec8 Delete type=2 #350
+2025/10/15-09:57:35.524 ec8 Delete type=2 #351
+2025/10/15-09:57:35.524 ec8 Delete type=2 #352
+2025/10/15-09:57:35.525 ec8 Delete type=2 #354
+2025/10/15-09:57:49.619 ec8 Level-0 table #360: started
+2025/10/15-09:57:49.638 ec8 Level-0 table #360: 1117306 bytes OK
+2025/10/15-09:57:49.639 ec8 Delete type=0 #353
+2025/10/15-09:57:49.648 ec8 Compacting 1@1 + 4@2 files
+2025/10/15-09:57:49.702 ec8 Generated table #361@1: 64684 keys, 2220805 bytes
+2025/10/15-09:57:49.732 ec8 Generated table #362@1: 28748 keys, 2177318 bytes
+2025/10/15-09:57:49.763 ec8 Generated table #363@1: 18293 keys, 2192564 bytes
+2025/10/15-09:57:49.793 ec8 Generated table #364@1: 33913 keys, 2167227 bytes
+2025/10/15-09:57:49.805 ec8 Generated table #365@1: 20421 keys, 390996 bytes
+2025/10/15-09:57:49.805 ec8 Compacted 1@1 + 4@2 files => 9148910 bytes
+2025/10/15-09:57:49.806 ec8 compacted to: files[ 0 0 5 0 0 0 0 ]
+2025/10/15-09:57:49.806 ec8 Delete type=2 #355
+2025/10/15-09:57:49.806 ec8 Delete type=2 #356
+2025/10/15-09:57:49.806 ec8 Delete type=2 #357
+2025/10/15-09:57:49.806 ec8 Delete type=2 #358
+2025/10/15-09:57:49.806 ec8 Delete type=2 #360
+2025/10/15-09:57:53.110 ec8 Level-0 table #367: started
+2025/10/15-09:57:53.130 ec8 Level-0 table #367: 1014527 bytes OK
+2025/10/15-09:57:53.130 ec8 Delete type=0 #359
+2025/10/15-09:57:53.131 ec8 Compacting 1@1 + 5@2 files
+2025/10/15-09:57:53.185 ec8 Generated table #368@1: 65502 keys, 2221908 bytes
+2025/10/15-09:57:53.215 ec8 Generated table #369@1: 29073 keys, 2180420 bytes
+2025/10/15-09:57:53.245 ec8 Generated table #370@1: 18018 keys, 2191880 bytes
+2025/10/15-09:57:53.271 ec8 Generated table #371@1: 24266 keys, 2155923 bytes
+2025/10/15-09:57:53.298 ec8 Generated table #372@1: 48701 keys, 958954 bytes
+2025/10/15-09:57:53.298 ec8 Compacted 1@1 + 5@2 files => 9709085 bytes
+2025/10/15-09:57:53.298 ec8 compacted to: files[ 0 0 5 0 0 0 0 ]
+2025/10/15-09:57:53.298 ec8 Delete type=2 #361
+2025/10/15-09:57:53.298 ec8 Delete type=2 #362
+2025/10/15-09:57:53.298 ec8 Delete type=2 #363
+2025/10/15-09:57:53.299 ec8 Delete type=2 #364
+2025/10/15-09:57:53.299 ec8 Delete type=2 #365
+2025/10/15-09:57:53.299 ec8 Delete type=2 #367
+2025/10/15-09:57:53.379 ec8 Level-0 table #374: started
+2025/10/15-09:57:53.397 ec8 Level-0 table #374: 1260444 bytes OK
+2025/10/15-09:57:53.398 ec8 Delete type=0 #366
+2025/10/15-09:57:53.399 ec8 Compacting 1@1 + 5@2 files
+2025/10/15-09:57:53.444 ec8 Generated table #375@1: 65243 keys, 2217989 bytes
+2025/10/15-09:57:53.482 ec8 Generated table #376@1: 33041 keys, 2188323 bytes
+2025/10/15-09:57:53.484 ec8 Level-0 table #379: started
+2025/10/15-09:57:53.499 ec8 Level-0 table #379: 1305113 bytes OK
+2025/10/15-09:57:53.499 ec8 Delete type=0 #373
+2025/10/15-09:57:53.522 ec8 Generated table #377@1: 5645 keys, 2162931 bytes
+2025/10/15-09:57:53.556 ec8 Generated table #380@1: 23991 keys, 2189340 bytes
+2025/10/15-09:57:53.599 ec8 Generated table #381@1: 67738 keys, 2150577 bytes
+2025/10/15-09:57:53.599 ec8 Compacted 1@1 + 5@2 files => 10909160 bytes
+2025/10/15-09:57:53.599 ec8 compacted to: files[ 1 0 5 0 0 0 0 ]
+2025/10/15-09:57:53.600 15c Level-0 table #383: started
+2025/10/15-09:57:53.614 15c Level-0 table #383: 1253273 bytes OK
+2025/10/15-09:57:53.615 15c Delete type=2 #368
+2025/10/15-09:57:53.615 15c Delete type=2 #369
+2025/10/15-09:57:53.615 15c Delete type=2 #370
+2025/10/15-09:57:53.615 15c Delete type=2 #371
+2025/10/15-09:57:53.615 15c Delete type=2 #372
+2025/10/15-09:57:53.615 15c Delete type=2 #374
+2025/10/15-09:57:53.615 15c Delete type=0 #378
+2025/10/15-09:57:53.618 ec8 Compacting 2@0 + 0@1 files
+2025/10/15-09:57:53.651 ec8 Generated table #384@0: 14781 keys, 2179027 bytes
+2025/10/15-09:57:53.660 ec8 Generated table #385@0: 3760 keys, 363324 bytes
+2025/10/15-09:57:53.660 ec8 Compacted 2@0 + 0@1 files => 2542351 bytes
+2025/10/15-09:57:53.660 ec8 compacted to: files[ 0 2 5 0 0 0 0 ]
+2025/10/15-09:57:53.661 ec8 Delete type=2 #379
+2025/10/15-09:57:53.661 ec8 Delete type=2 #383
+2025/10/15-09:57:53.665 ec8 Compacting 1@1 + 3@2 files
+2025/10/15-09:57:53.714 ec8 Level-0 table #388: started
+2025/10/15-09:57:53.732 ec8 Level-0 table #388: 1336711 bytes OK
+2025/10/15-09:57:53.733 ec8 Delete type=0 #382
+2025/10/15-09:57:53.739 ec8 Generated table #386@1: 70387 keys, 2224593 bytes
+2025/10/15-09:57:53.783 ec8 Generated table #389@1: 37698 keys, 2196194 bytes
+2025/10/15-09:57:53.803 ec8 Generated table #390@1: 1675 keys, 2147257 bytes
+2025/10/15-09:57:53.829 ec8 Generated table #391@1: 8835 keys, 2180313 bytes
+2025/10/15-09:57:53.831 ec8 Generated table #392@1: 114 keys, 10925 bytes
+2025/10/15-09:57:53.831 ec8 Compacted 1@1 + 3@2 files => 8759282 bytes
+2025/10/15-09:57:53.831 ec8 compacted to: files[ 1 1 7 0 0 0 0 ]
+2025/10/15-09:57:53.831 ec8 Delete type=2 #375
+2025/10/15-09:57:53.832 ec8 Delete type=2 #376
+2025/10/15-09:57:53.832 ec8 Delete type=2 #377
+2025/10/15-09:57:53.832 ec8 Delete type=2 #384
+2025/10/15-09:57:53.834 ec8 Level-0 table #394: started
+2025/10/15-09:57:53.850 ec8 Level-0 table #394: 1370508 bytes OK
+2025/10/15-09:57:53.851 ec8 Delete type=0 #387
+2025/10/15-09:57:53.853 ec8 Compacting 2@0 + 1@1 files
+2025/10/15-09:57:53.884 ec8 Generated table #395@0: 13250 keys, 2169067 bytes
+2025/10/15-09:57:53.904 ec8 Generated table #396@0: 9276 keys, 895097 bytes
+2025/10/15-09:57:53.904 ec8 Compacted 2@0 + 1@1 files => 3064164 bytes
+2025/10/15-09:57:53.905 ec8 compacted to: files[ 0 2 7 0 0 0 0 ]
+2025/10/15-09:57:53.910 ec8 Compacting 1@1 + 3@2 files
+2025/10/15-09:57:53.936 ec8 Generated table #397@1: 8839 keys, 2180337 bytes
+2025/10/15-09:57:53.992 ec8 Generated table #398@1: 31596 keys, 2254170 bytes
+2025/10/15-09:57:53.999 ec8 Generated table #399@1: 1781 keys, 840158 bytes
+2025/10/15-09:57:54.000 ec8 Compacted 1@1 + 3@2 files => 5274665 bytes
+2025/10/15-09:57:54.000 ec8 compacted to: files[ 0 1 7 0 0 0 0 ]
+2025/10/15-09:57:54.001 ec8 Delete type=2 #385
+2025/10/15-09:57:54.001 ec8 Delete type=2 #388
+2025/10/15-09:57:54.001 ec8 Delete type=2 #394
+2025/10/15-09:57:54.066 ec8 Compacting 1@1 + 4@2 files
+2025/10/15-09:57:54.128 ec8 Level-0 table #402: started
+2025/10/15-09:57:54.154 ec8 Level-0 table #402: 1786675 bytes OK
+2025/10/15-09:57:54.155 ec8 Delete type=2 #380
+2025/10/15-09:57:54.156 ec8 Delete type=2 #391
+2025/10/15-09:57:54.156 ec8 Delete type=2 #392
+2025/10/15-09:57:54.156 ec8 Delete type=0 #393
+2025/10/15-09:57:54.156 ec8 Delete type=2 #396
+2025/10/15-09:57:54.162 ec8 Generated table #400@1: 62095 keys, 2215471 bytes
+2025/10/15-09:57:54.218 ec8 Generated table #403@1: 50622 keys, 2211232 bytes
+2025/10/15-09:57:54.243 ec8 Generated table #404@1: 6767 keys, 2151501 bytes
+2025/10/15-09:57:54.268 ec8 Generated table #405@1: 1949 keys, 2154330 bytes
+2025/10/15-09:57:54.296 ec8 Generated table #406@1: 10096 keys, 2181523 bytes
+2025/10/15-09:57:54.297 ec8 Generated table #407@1: 319 keys, 31225 bytes
+2025/10/15-09:57:54.298 ec8 Compacted 1@1 + 4@2 files => 10945282 bytes
+2025/10/15-09:57:54.298 ec8 compacted to: files[ 1 0 9 0 0 0 0 ]
+2025/10/15-09:57:54.298 ec8 Delete type=2 #386
+2025/10/15-09:57:54.298 ec8 Delete type=2 #389
+2025/10/15-09:57:54.298 ec8 Delete type=2 #390
+2025/10/15-09:57:54.298 ec8 Delete type=2 #395
+2025/10/15-09:57:54.299 ec8 Delete type=2 #397
+2025/10/15-09:57:54.422 15c Moved #402 to level-1 1786675 bytes OK: files[ 0 1 9 0 0 0 0 ]
+2025/10/15-09:57:54.442 15c Compacting 1@1 + 7@2 files
+2025/10/15-09:57:54.499 15c Generated table #408@1: 64769 keys, 2221810 bytes
+2025/10/15-09:57:54.532 15c Generated table #409@1: 29019 keys, 2182521 bytes
+2025/10/15-09:57:54.548 15c Generated table #410@1: 1553 keys, 2143242 bytes
+2025/10/15-09:57:54.566 15c Generated table #411@1: 1953 keys, 2156093 bytes
+2025/10/15-09:57:54.592 15c Generated table #412@1: 11379 keys, 2185702 bytes
+2025/10/15-09:57:54.640 15c Generated table #413@1: 27771 keys, 2257625 bytes
+2025/10/15-09:57:54.645 15c Generated table #414@1: 6507 keys, 240291 bytes
+2025/10/15-09:57:54.645 15c Compacted 1@1 + 7@2 files => 13387284 bytes
+2025/10/15-09:57:54.646 15c compacted to: files[ 0 0 9 0 0 0 0 ]
+2025/10/15-09:57:54.929 ec8 Level-0 table #416: started
+2025/10/15-09:57:54.945 ec8 Level-0 table #416: 788837 bytes OK
+2025/10/15-09:57:54.945 ec8 Delete type=2 #398
+2025/10/15-09:57:54.945 ec8 Delete type=2 #400
+2025/10/15-09:57:54.945 ec8 Delete type=0 #401
+2025/10/15-09:57:54.945 ec8 Delete type=2 #402
+2025/10/15-09:57:54.945 ec8 Delete type=2 #403
+2025/10/15-09:57:54.945 ec8 Delete type=2 #404
+2025/10/15-09:57:54.945 ec8 Delete type=2 #405
+2025/10/15-09:57:54.946 ec8 Delete type=2 #406
+2025/10/15-09:57:54.946 ec8 Delete type=2 #407
+2025/10/15-09:57:54.949 ec8 Compacting 1@1 + 9@2 files
+2025/10/15-09:57:54.999 ec8 Generated table #417@1: 64002 keys, 2216300 bytes
+2025/10/15-09:57:55.033 ec8 Generated table #418@1: 31372 keys, 2189891 bytes
+2025/10/15-09:57:55.051 ec8 Generated table #419@1: 1547 keys, 2143750 bytes
+2025/10/15-09:57:55.068 ec8 Generated table #420@1: 1949 keys, 2154760 bytes
+2025/10/15-09:57:55.094 ec8 Generated table #421@1: 9965 keys, 2177598 bytes
+2025/10/15-09:57:55.137 ec8 Generated table #422@1: 25628 keys, 2260094 bytes
+2025/10/15-09:57:55.163 ec8 Generated table #423@1: 26661 keys, 2168527 bytes
+2025/10/15-09:57:55.198 ec8 Generated table #424@1: 63140 keys, 1439948 bytes
+2025/10/15-09:57:55.198 ec8 Compacted 1@1 + 9@2 files => 16750868 bytes
+2025/10/15-09:57:55.198 ec8 compacted to: files[ 0 0 8 0 0 0 0 ]
+2025/10/15-09:57:55.198 ec8 Delete type=2 #381
+2025/10/15-09:57:55.198 ec8 Delete type=2 #399
+2025/10/15-09:57:55.198 ec8 Delete type=2 #408
+2025/10/15-09:57:55.198 ec8 Delete type=2 #409
+2025/10/15-09:57:55.198 ec8 Delete type=2 #410
+2025/10/15-09:57:55.199 ec8 Delete type=2 #411
+2025/10/15-09:57:55.199 ec8 Delete type=2 #412
+2025/10/15-09:57:55.199 ec8 Delete type=2 #413
+2025/10/15-09:57:55.199 ec8 Delete type=2 #414
+2025/10/15-09:57:55.199 ec8 Delete type=2 #416
+2025/10/15-09:58:00.487 ec8 Level-0 table #426: started
+2025/10/15-09:58:00.505 ec8 Level-0 table #426: 895897 bytes OK
+2025/10/15-09:58:00.506 ec8 Delete type=0 #415
+2025/10/15-09:58:00.506 ec8 Manual compaction at level-0 from '\x00L\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00M\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/10/15-09:58:01.775 ec8 Compacting 1@1 + 8@2 files
+2025/10/15-09:58:01.834 ec8 Generated table #427@1: 65226 keys, 2221521 bytes
+2025/10/15-09:58:01.870 ec8 Generated table #428@1: 29398 keys, 2183664 bytes
+2025/10/15-09:58:01.887 ec8 Generated table #429@1: 1553 keys, 2144845 bytes
+2025/10/15-09:58:01.906 ec8 Generated table #430@1: 1952 keys, 2156201 bytes
+2025/10/15-09:58:01.934 ec8 Generated table #431@1: 11258 keys, 2184312 bytes
+2025/10/15-09:58:01.980 ec8 Generated table #432@1: 27541 keys, 2258088 bytes
+2025/10/15-09:58:02.009 ec8 Generated table #433@1: 24400 keys, 2172573 bytes
+2025/10/15-09:58:02.048 ec8 Generated table #434@1: 67971 keys, 1614402 bytes
+2025/10/15-09:58:02.048 ec8 Compacted 1@1 + 8@2 files => 16935606 bytes
+2025/10/15-09:58:02.048 ec8 compacted to: files[ 0 0 8 0 0 0 0 ]
+2025/10/15-09:58:02.049 ec8 Delete type=2 #417
+2025/10/15-09:58:02.049 ec8 Delete type=2 #418
+2025/10/15-09:58:02.049 ec8 Delete type=2 #419
+2025/10/15-09:58:02.049 ec8 Delete type=2 #420
+2025/10/15-09:58:02.049 ec8 Delete type=2 #421
+2025/10/15-09:58:02.049 ec8 Delete type=2 #422
+2025/10/15-09:58:02.049 ec8 Delete type=2 #423
+2025/10/15-09:58:02.049 ec8 Delete type=2 #424
+2025/10/15-09:58:02.049 ec8 Delete type=2 #426

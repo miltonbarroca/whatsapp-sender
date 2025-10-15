@@ -1,24 +1,26 @@
+@use '../../styles/variables' as *;
+
 .presets-container {
-  background: #fff;
+  background: $white;
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba($black, 0.05);
+  border: 1px solid $grayBorder;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 
   .presets-header {
     h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: $fontSizeLg;
+      font-weight: $fontWeightMedium;
       margin: 0;
     }
 
     p {
-      font-size: 0.9rem;
-      color: #6b7280;
+      font-size: $fontSizeSm;
+      color: $gray;
       margin: 0;
-
     }
   }
 
@@ -36,11 +38,11 @@
       justify-content: center;
       padding: 1rem;
       border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: $fontSizeBase;
+      font-weight: $fontWeightMedium;
       cursor: pointer;
       border: none;
-      color: #fff;
+      color: $white;
       transition: all 0.2s ease;
 
       svg {
@@ -48,18 +50,18 @@
       }
 
       &.danger {
-        background: linear-gradient(to right, #ef4444, #dc2626);
+        background: $red;
 
         &:hover {
-          background: #b91c1c;
+          background: $redDark;
         }
       }
 
       &.success {
-        background: linear-gradient(to right, #22c55e, #16a34a);
+        background: $greenLight;
 
         &:hover {
-          background: #15803d;
+          background: $greenDark;
         }
       }
     }

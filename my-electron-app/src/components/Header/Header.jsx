@@ -60,7 +60,7 @@ export default function Header() {
           <MessageSquare className="icon" />
         </div>
         <div>
-          <h1 className="title">WhatsApp Bot</h1>
+          <h1 className="title">WhatsApp Helper</h1>
           <p className="subtitle">Envio em massa de mensagens</p>
         </div>
       </div>
@@ -74,14 +74,14 @@ export default function Header() {
           <Clock size={18} />
           <span>Histórico</span>
         </Button> */}
-        <Button
+        {/* <Button
           onClick={handleSendMessages}
           disabled={isProcessing}
           className="primary"
         >
           <Send size={18} />
           <span>{isProcessing ? "Enviando..." : "Enviar"}</span>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
