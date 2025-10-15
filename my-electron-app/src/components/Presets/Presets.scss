@@ -1,0 +1,67 @@
+.presets-container {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .presets-header {
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin: 0;
+
+    }
+  }
+
+  .presets-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .preset-btn {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      color: #fff;
+      transition: all 0.2s ease;
+
+      svg {
+        margin-bottom: 0.4rem;
+      }
+
+      &.danger {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+
+        &:hover {
+          background: #b91c1c;
+        }
+      }
+
+      &.success {
+        background: linear-gradient(to right, #22c55e, #16a34a);
+
+        &:hover {
+          background: #15803d;
+        }
+      }
+    }
+  }
+}

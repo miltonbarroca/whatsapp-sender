@@ -1,29 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Header.scss";
+import { MessageSquare, Send, Settings, Clock } from "lucide-react";
 
-// Placeholders para ícones e botões
-const MessageSquare = () => <div style={{ width: 24, height: 24, background: "#ccc" }} />;
-const Settings = () => <div style={{ width: 16, height: 16, background: "#ccc" }} />;
-const Clock = () => <div style={{ width: 16, height: 16, background: "#ccc" }} />;
-const Send = () => <div style={{ width: 16, height: 16, background: "#ccc" }} />;
-const Button = ({ children, ...props }) => (
-  <button {...props} style={{ padding: "0.5rem 1rem", borderRadius: 4 }}>
+const Button = ({ children, className = "", ...props }) => (
+  <button {...props} className={`btn ${className}`}>
     {children}
   </button>
 );
 
 export default function Header() {
-  // Placeholders para funções
-  const handleConfigure = () => {};
-  const handleHistory = () => {};
-  const handleSendMessages = () => {};
-  const isProcessing = false;
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleConfigure = () => {
+    // Aqui você pode abrir configurações
+    alert("Abrir configurações...");
+  };
+
+  const handleHistory = () => {
+    // Aqui você pode abrir histórico
+    alert("Abrir histórico...");
+  };
+
+  const handleSendMessages = async () => {
+    const numbersTextarea = document.querySelector(".phone-card textarea");
+    if (!numbersTextarea) {
+      alert("Área de números não encontrada!");
+      return;
+    }
+
+    const numbers = numbersTextarea.value
+      .split("\n")
+      .map((n) => n.replace(/\D/g, ""))
+      .filter((n) => n !== "");
+
+    if (numbers.length === 0) {
+      alert("Cole pelo menos um número.");
+      return;
+    }
+
+    const MESSAGE = "Olá! Esta é uma mensagem automática.";
+
+    setIsProcessing(true);
+    try {
+      const { ipcRenderer } = window.require("electron");
+      const result = await ipcRenderer.invoke("send-whatsapp", numbers, MESSAGE);
+
+      if (result.success) alert("Mensagens enviadas!");
+      else alert("Erro: " + result.error);
+    } catch (err) {
+      alert("Erro: " + err.message);
+    }
+    setIsProcessing(false);
+  };
 
   return (
     <div className="header">
       <div className="header-left">
         <div className="icon-wrapper">
-          <MessageSquare />
+          <MessageSquare className="icon" />
         </div>
         <div>
           <h1 className="title">WhatsApp Bot</h1>
@@ -32,14 +66,21 @@ export default function Header() {
       </div>
 
       <div className="header-right">
-        <Button onClick={handleConfigure} className="btn">
-          <Settings /> Configurar
+        <Button onClick={handleConfigure}>
+          <Settings size={18} />
+          <span>Configurar</span>
         </Button>
-        <Button onClick={handleHistory} className="btn">
-          <Clock /> Histórico
-        </Button>
-        <Button onClick={handleSendMessages} disabled={isProcessing} className="btn primary">
-          <Send /> {isProcessing ? "Enviando..." : "Enviar"}
+        {/* <Button onClick={handleHistory}>
+          <Clock size={18} />
+          <span>Histórico</span>
+        </Button> */}
+        <Button
+          onClick={handleSendMessages}
+          disabled={isProcessing}
+          className="primary"
+        >
+          <Send size={18} />
+          <span>{isProcessing ? "Enviando..." : "Enviar"}</span>
         </Button>
       </div>
     </div>

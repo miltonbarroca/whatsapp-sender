@@ -5,11 +5,11 @@ const { sendMessages } = require("./src/main/whatsapp.js"); // require comum
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 700,
     webPreferences: {
-      nodeIntegration: true, // já permite usar require('electron') no React
-      contextIsolation: false, // necessário para nodeIntegration
-      // preload: path.join(__dirname, "preload.js"), // remover ou comentar
+      nodeIntegration: true,
+      contextIsolation: false,
+      // preload: path.join(__dirname, "preload.js"), 
     },
   });
 
