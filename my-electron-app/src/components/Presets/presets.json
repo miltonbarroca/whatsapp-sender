@@ -1,0 +1,32 @@
+{
+  "cobranca": [
+    {
+      "id": 4,
+      "text": "Olá, estamos entrando em contato sobre sua cobrança pendente."
+    },
+    {
+      "id": 5,
+      "text": "teste 1"
+    },
+    {
+      "id": 6,
+      "text": "teste 2"
+    },
+    {
+      "id": 7,
+      "text": "teste 3"
+    }
+  ],
+  "prospeccao": [
+    {
+      "id": 1,
+      "text": "Olá, gostaríamos de apresentar nossos serviços."
+    }
+  ],
+  "renovacao": [
+    {
+      "id": 1,
+      "text": "Olá, sua assinatura está prestes a expirar."
+    }
+  ]
+}

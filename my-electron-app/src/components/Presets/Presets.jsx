@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Presets.scss";
 import { DollarSign, UserPlus, RefreshCw } from "lucide-react";
-import cobrancaMessages from "./cobranca.json";
 
 export default function Presets({ onSelectPreset }) {
-    const sendCobrança = async () => {
+    const [presets, setPresets] = useState({});
+
+    useEffect(() => {
+        if (!window.require) return;
+        const { ipcRenderer } = window.require("electron");
+
+        ipcRenderer.invoke("load-presets").then((data) => {
+            if (!data.error) setPresets(data);
+        }).catch(err => {
+            console.error("Erro ao carregar presets:", err);
+        });
+    }, []);
+
+    const sendMessages = async (presetName) => {
         if (!window.require) return;
 
         const { ipcRenderer } = window.require("electron");
 
-        // Pega os números do textarea
         const numbersTextarea = document.querySelector(".phone-card textarea");
         if (!numbersTextarea) {
             alert("Área de números não encontrada!");
@@ -26,19 +37,25 @@ export default function Presets({ onSelectPreset }) {
             return;
         }
 
-        // Cria um array de mensagens aleatórias para cada número
+        const messagesList = presets[presetName];
+        if (!messagesList || messagesList.length === 0) {
+            alert(`Preset "${presetName}" está vazio. Adicione mensagens no presets.json.`);
+            return;
+        }
+
+        // Cria mensagens aleatórias (uma variação por número)
         const messages = numbers.map(() => {
-            const randomIndex = Math.floor(Math.random() * cobrancaMessages.length);
-            return cobrancaMessages[randomIndex];
+            const randomIndex = Math.floor(Math.random() * messagesList.length);
+            return messagesList[randomIndex].text;
         });
 
-        await ipcRenderer.invoke("send-whatsapp-multiple", numbers, messages);
+        console.log("Enviando mensagens:");
+        console.log("Números:", numbers);
+        console.log("Mensagens:", messages);
 
-
-        // Envia via IPC
         try {
             const result = await ipcRenderer.invoke("send-whatsapp-multiple", numbers, messages);
-            if (result.success) alert("Mensagens de cobrança enviadas!");
+            if (result.success) alert("Mensagens enviadas!");
             else alert("Erro: " + result.error);
         } catch (err) {
             alert("Erro: " + err.message);
@@ -63,7 +80,7 @@ export default function Presets({ onSelectPreset }) {
 
                 <button
                     className="preset-btn danger"
-                    onClick={sendCobrança}
+                    onClick={() => sendMessages("cobranca")}
                 >
                     <DollarSign size={22} />
                     <span>Cobrança</span>

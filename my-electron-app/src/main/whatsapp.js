@@ -36,7 +36,7 @@ async function initDriver() {
     }
   }
 
-  console.log("Sessão logada no WhatsApp Web!");
+  console.log("Sessão logada");
   return driver;
 }
 
@@ -81,7 +81,6 @@ async function sendMessages(numbers, messages) {
   console.log("Envio concluído!");
 }
 
-// Fecha driver manualmente ao encerrar o app
 async function closeDriver() {
   if (driver) {
     await driver.quit();

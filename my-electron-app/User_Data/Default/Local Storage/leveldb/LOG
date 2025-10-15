@@ -1,6 +1,6 @@
-2025/10/15-10:12:53.329 2958 Reusing MANIFEST C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\Local Storage\leveldb/MANIFEST-000001
-2025/10/15-10:12:53.333 2958 Recovering log #3
-2025/10/15-10:12:53.335 2958 Reusing old log C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\Local Storage\leveldb/000003.log 
-2025/10/15-10:13:51.033 3d7c Level-0 table #5: started
-2025/10/15-10:13:51.041 3d7c Level-0 table #5: 18136 bytes OK
-2025/10/15-10:13:51.043 3d7c Delete type=0 #3
+2025/10/15-18:36:45.592 32c Reusing MANIFEST C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\Local Storage\leveldb/MANIFEST-000001
+2025/10/15-18:36:45.597 32c Recovering log #4
+2025/10/15-18:36:45.600 32c Reusing old log C:\Users\kryp\Desktop\Projetos\whatsapp-sender\my-electron-app\User_Data\Default\Local Storage\leveldb/000004.log 
+2025/10/15-18:37:45.618 db0 Level-0 table #8: started
+2025/10/15-18:37:45.622 db0 Level-0 table #8: 15554 bytes OK
+2025/10/15-18:37:45.624 db0 Delete type=0 #4
