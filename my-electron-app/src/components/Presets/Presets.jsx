@@ -39,11 +39,10 @@ export default function Presets({ onSelectPreset }) {
 
         const messagesList = presets[presetName];
         if (!messagesList || messagesList.length === 0) {
-            alert(`Preset "${presetName}" está vazio. Adicione mensagens no presets.json.`);
+            alert(`Preset "${presetName}" vazio.`);
             return;
         }
 
-        // Cria mensagens aleatórias (uma variação por número)
         const messages = numbers.map(() => {
             const randomIndex = Math.floor(Math.random() * messagesList.length);
             return messagesList[randomIndex].text;
@@ -72,7 +71,7 @@ export default function Presets({ onSelectPreset }) {
             <div className="presets-buttons">
                 <button
                     className="preset-btn success"
-                    onClick={() => onSelectPreset?.("prospeccao")}
+                    onClick={() => sendMessages("prospeccao")}
                 >
                     <UserPlus size={22} />
                     <span>Prospecção</span>
@@ -88,7 +87,7 @@ export default function Presets({ onSelectPreset }) {
 
                 <button
                     className="preset-btn success"
-                    onClick={() => onSelectPreset?.("renovacao")}
+                    onClick={() => sendMessages("renovacao")}
                 >
                     <RefreshCw size={22} />
                     <span>Renovação</span>

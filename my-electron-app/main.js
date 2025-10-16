@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const isDev = require("electron-is-dev");
 const { sendMessages, closeDriver } = require("./src/main/whatsapp.js");
 
 const presetsPath = path.resolve(__dirname, "src/components/Presets/presets.json");
@@ -15,7 +16,11 @@ function createWindow() {
     },
   });
 
-  win.loadURL("http://localhost:5173");
+  if (isDev) {
+    win.loadURL("http://localhost:5173");
+  } else {
+    win.loadFile(path.join(__dirname, "dist/index.html"));
+  }
 }
 
 app.whenReady().then(createWindow);
@@ -36,7 +41,6 @@ ipcMain.handle("load-presets", async () => {
     const data = fs.readFileSync(presetsPath, "utf8");
     const jsonData = JSON.parse(data);
 
-    // Garante que todos os campos existam
     jsonData.cobranca ||= [];
     jsonData.prospeccao ||= [];
     jsonData.renovacao ||= [];
@@ -47,6 +51,7 @@ ipcMain.handle("load-presets", async () => {
     return { cobranca: [], prospeccao: [], renovacao: [] };
   }
 });
+
 // Salvar presets
 ipcMain.handle("save-presets", async (event, newData) => {
   try {

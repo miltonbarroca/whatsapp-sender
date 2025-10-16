@@ -1,5 +1,5 @@
 {
-  "name": "my-electron-app",
+  "name": "whatsapp-sender",
   "private": true,
   "version": "0.0.0",
   "main": "main.js",
@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "electron": "electron .",
-    "start": "concurrently \"npm run dev\" \"npm run electron\""
+    "start": "concurrently \"npm run dev\" \"npm run electron\"",
+    "build": "vite build && electron-builder"
   },
   "dependencies": {
     "lucide-react": "^0.545.0",
@@ -23,11 +24,26 @@
     "chromedriver": "^141.0.2",
     "concurrently": "^9.2.1",
     "electron": "^38.2.2",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^2.0.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
     "sass": "^1.93.2",
     "vite": "^7.1.7"
+  },
+  "build": {
+    "appId": "com.seuapp.whatsapp-sender",
+    "files": [
+      "**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis",
+      "sign": false
+    }
   }
 }

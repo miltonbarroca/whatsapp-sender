@@ -1,20 +1,12 @@
 {
   "cobranca": [
     {
-      "id": 4,
-      "text": "Olá, estamos entrando em contato sobre sua cobrança pendente."
+      "id": 1,
+      "text": "Prezado, verificamos que o pagamento de *suas parcela(s) se encontra(m) em atraso*. \n\nEntendemos que situações imprevistas podem ocorrer, no entanto, *solicitamos que o pagamento seja regularizado o mais breve possível, no prazo máximo de 16/10/2025*.\n\nCaso o pagamento não seja realizado até a data acima, infelizmente, *encaminharemos o contrato para início das tratativas legais*.\n\nCaso precise de uma nova data ou uma *negociação específica para regularizar*, entre em contato conosco por meio do telefone (54) 3290-8500, (54) 9647-6381 ou em nossa agência.\n\nAgradecemos pela sua compreensão e esperamos resolver essa pendência com brevidade. Atenciosamente, *Banco da Família*."
     },
     {
-      "id": 5,
+      "id": 2,
       "text": "teste 1"
-    },
-    {
-      "id": 6,
-      "text": "teste 2"
-    },
-    {
-      "id": 7,
-      "text": "teste 3"
     }
   ],
   "prospeccao": [
@@ -26,7 +18,7 @@
   "renovacao": [
     {
       "id": 1,
-      "text": "Olá, sua assinatura está prestes a expirar."
+      "text": "Olá, sua assinatura está prestes a expirar.\n\nteste 1"
     }
   ]
 }

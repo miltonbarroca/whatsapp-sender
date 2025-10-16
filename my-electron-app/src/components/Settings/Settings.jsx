@@ -15,8 +15,11 @@ export default function Settings({ isOpen, onClose }) {
 
         if (isOpen) {
             ipcRenderer.invoke("load-presets").then((data) => {
+                // Monta o texto com quebras de linha e separador '---' para variações
                 const parseMessages = (arr = []) =>
-                    arr.map((item) => (typeof item === "string" ? item : item.text)).join("\n\n");
+                    arr
+                        .map((item) => (typeof item === "string" ? item : item.text))
+                        .join("\n---\n");
 
                 setMessages({
                     cobranca: parseMessages(data.cobranca),
@@ -35,23 +38,26 @@ export default function Settings({ isOpen, onClose }) {
         if (!window.require) return;
         const { ipcRenderer } = window.require("electron");
 
-        const buildArray = (text, startId = 1) =>
-            text
-                .split(/\n\s*\n/) // separa por linha em branco
-                .map((m) => m.trim())
-                .filter((m) => m !== "")
+        const buildArray = (text, startId = 1) => {
+            return text
+                .split(/\n{3,}/)      
+                .map(m => m.trim())
+                .filter(m => m !== "")
                 .map((m, index) => ({
                     id: startId + index,
-                    text: m
+                    text: m    
                 }));
+        };
+
+
 
         try {
             const current = await ipcRenderer.invoke("load-presets");
 
             const payload = {
-                cobranca: buildArray(messages.cobranca, current.cobranca?.length || 1),
-                prospeccao: buildArray(messages.prospeccao, current.prospeccao?.length || 1),
-                renovacao: buildArray(messages.renovacao, current.renovacao?.length || 1)
+                cobranca: buildArray(messages.cobranca, 1),
+                prospeccao: buildArray(messages.prospeccao, 1),
+                renovacao: buildArray(messages.renovacao, 1)
             };
 
             await ipcRenderer.invoke("save-presets", payload);
@@ -86,7 +92,8 @@ export default function Settings({ isOpen, onClose }) {
                         className="modal-textarea"
                         value={messages[activeTab]}
                         onChange={handleChange}
-                        placeholder="Escreva as mensagens separadas por uma linha em branco"
+                        placeholder="Escreva as mensagens. Separe variações com uma linha contendo apenas ---"
+                        rows={10}
                     />
                 </div>
 
