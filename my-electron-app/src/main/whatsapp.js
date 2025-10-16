@@ -2,10 +2,13 @@ const { Builder, By, Key } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 const path = require("path");
+const os = require("os"); // <-- adicionado
 require("chromedriver");
 
-const userDataDir = path.join(process.cwd(), "User_Data");
-if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir);
+// Caminho seguro para armazenamento do perfil do Chrome
+const userDataDir = path.join(os.homedir(), "WhatsappSenderUserData");
+
+if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
 
 let driver = null; // driver global para manter aberto
 

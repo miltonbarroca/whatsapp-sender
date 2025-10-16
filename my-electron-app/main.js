@@ -6,8 +6,10 @@ const { sendMessages, closeDriver } = require("./src/main/whatsapp.js");
 
 const presetsPath = path.resolve(__dirname, "src/components/Presets/presets.json");
 
+let win;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1000,
     height: 800,
     webPreferences: {
@@ -18,12 +20,24 @@ function createWindow() {
 
   if (isDev) {
     win.loadURL("http://localhost:5173");
+    win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(__dirname, "dist/index.html"));
+    // caminho absoluto para index.html dentro do build
+    const indexPath = path.join(__dirname, "dist", "index.html");
+    win.loadFile(indexPath).catch((err) => {
+      console.error("Erro ao carregar index.html:", err);
+    });
   }
 }
 
 app.whenReady().then(createWindow);
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
 
 // Carregar presets
 ipcMain.handle("load-presets", async () => {
@@ -32,7 +46,7 @@ ipcMain.handle("load-presets", async () => {
       const defaultData = {
         cobranca: ["Olá, estamos entrando em contato sobre sua cobrança pendente."],
         prospeccao: ["Olá, gostaríamos de apresentar nossos serviços."],
-        renovacao: ["Olá, sua assinatura está prestes a expirar."]
+        renovacao: ["Olá, sua assinatura está prestes a expirar."],
       };
       fs.writeFileSync(presetsPath, JSON.stringify(defaultData, null, 2), "utf8");
       return defaultData;
