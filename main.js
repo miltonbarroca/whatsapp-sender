@@ -4,7 +4,9 @@ const fs = require("fs");
 const isDev = require("electron-is-dev");
 const { sendMessages, closeDriver } = require("./src/main/whatsapp.js");
 
-const presetsPath = path.resolve(__dirname, "src/components/Presets/presets.json");
+const bundledPresetsPath = path.resolve(__dirname, "src/components/Presets/presets.json");
+const userDataDir = app.getPath("userData");
+const userPresetsPath = path.join(userDataDir, "presets.json");
 
 let win;
 
@@ -42,17 +44,24 @@ app.on("activate", () => {
 // Carregar presets
 ipcMain.handle("load-presets", async () => {
   try {
-    if (!fs.existsSync(presetsPath)) {
-      const defaultData = {
-        cobranca: ["Olá, estamos entrando em contato sobre sua cobrança pendente."],
-        prospeccao: ["Olá, gostaríamos de apresentar nossos serviços."],
-        renovacao: ["Olá, sua assinatura está prestes a expirar."],
-      };
-      fs.writeFileSync(presetsPath, JSON.stringify(defaultData, null, 2), "utf8");
-      return defaultData;
+    // Garante que há um presets.json em userData; se não houver, tenta copiar do empacotado
+    if (!fs.existsSync(userPresetsPath)) {
+      try {
+        const defaultData = fs.existsSync(bundledPresetsPath)
+          ? JSON.parse(fs.readFileSync(bundledPresetsPath, "utf8"))
+          : {
+              cobranca: ["Olá, estamos entrando em contato sobre sua cobrança pendente."],
+              prospeccao: ["Olá, gostaríamos de apresentar nossos serviços."],
+              renovacao: ["Olá, sua assinatura está prestes a expirar."],
+            };
+        fs.mkdirSync(userDataDir, { recursive: true });
+        fs.writeFileSync(userPresetsPath, JSON.stringify(defaultData, null, 2), "utf8");
+      } catch (e) {
+        console.error("Falha ao inicializar presets em userData:", e);
+      }
     }
 
-    const data = fs.readFileSync(presetsPath, "utf8");
+    const data = fs.readFileSync(userPresetsPath, "utf8");
     const jsonData = JSON.parse(data);
 
     jsonData.cobranca ||= [];
@@ -69,7 +78,8 @@ ipcMain.handle("load-presets", async () => {
 // Salvar presets
 ipcMain.handle("save-presets", async (event, newData) => {
   try {
-    fs.writeFileSync(presetsPath, JSON.stringify(newData, null, 2), "utf8");
+    fs.mkdirSync(userDataDir, { recursive: true });
+    fs.writeFileSync(userPresetsPath, JSON.stringify(newData, null, 2), "utf8");
     return { success: true };
   } catch (err) {
     console.error("Erro ao salvar presets:", err);

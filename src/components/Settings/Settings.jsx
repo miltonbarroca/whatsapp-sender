@@ -15,7 +15,6 @@ export default function Settings({ isOpen, onClose }) {
 
         if (isOpen) {
             ipcRenderer.invoke("load-presets").then((data) => {
-                // Monta o texto com quebras de linha e separador '---' para variações
                 const parseMessages = (arr = []) =>
                     arr
                         .map((item) => (typeof item === "string" ? item : item.text))
@@ -39,14 +38,13 @@ export default function Settings({ isOpen, onClose }) {
         const { ipcRenderer } = window.require("electron");
 
         const buildArray = (text, startId = 1) => {
+            // Separa variações apenas por linha contendo '---'
+            const SEPARATOR_REGEX = /\n\s*---\s*\n/g;
             return text
-                .split(/\n{3,}/)      
+                .split(SEPARATOR_REGEX)
                 .map(m => m.trim())
                 .filter(m => m !== "")
-                .map((m, index) => ({
-                    id: startId + index,
-                    text: m    
-                }));
+                .map((m, index) => ({ id: startId + index, text: m }));
         };
 
 
