@@ -8,7 +8,6 @@ Este README serve como guia rápido para desenvolvedores que vão trabalhar no p
 
 Para iniciar o projeto em modo de desenvolvimento:
 
-```bash
 npm install
 npm start
 
