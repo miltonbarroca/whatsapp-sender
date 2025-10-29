@@ -8,6 +8,51 @@ const bundledPresetsPath = path.resolve(__dirname, "src/components/Presets/prese
 const userDataDir = app.getPath("userData");
 const userPresetsPath = path.join(userDataDir, "presets.json");
 
+const { net } = require("electron");
+const { version } = require("./package.json");
+
+// Função para verificar se há nova versão
+async function checkForUpdates() {
+  const request = net.request("https://api.github.com/repos/miltonbarroca/whatsapp-sender/releases/latest");
+
+  return new Promise((resolve, reject) => {
+    request.on("response", (response) => {
+      let body = "";
+      response.on("data", (chunk) => {
+        body += chunk;
+      });
+      response.on("end", () => {
+        try {
+          const data = JSON.parse(body);
+          const latest = data.tag_name?.replace("v", "") ?? null;
+
+          if (latest && latest !== version) {
+            console.log(`Nova versão disponível: ${latest}`);
+            win.webContents.send("update-available", {
+              version: latest,
+              url: data.html_url,
+            });
+          }
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+
+    request.on("error", (err) => reject(err));
+    request.setHeader("User-Agent", "Electron-App");
+    request.end();
+  });
+}
+
+app.whenReady().then(async () => {
+  createWindow();
+
+  // Verifica updates 5s depois do app iniciar
+  setTimeout(checkForUpdates, 5000);
+});
+
 let win;
 
 function createWindow() {

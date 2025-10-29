@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { MessageSquare, Settings as SettingsIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDownCircle, MessageSquare, Settings as SettingsIcon } from "lucide-react";
 import Settings from "../Settings/Settings";
 import "./Header.scss";
+
+const { ipcRenderer } = window.require("electron");
 
 const Button = ({ children, className = "", ...props }) => (
   <button {...props} className={`btn ${className}`}>
@@ -11,14 +13,26 @@ const Button = ({ children, className = "", ...props }) => (
 
 export default function Header() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState(null);
 
-  const handleConfigure = () => {
-    setIsSettingsOpen(true);
+  useEffect(() => {
+    ipcRenderer.on("update-available", (event, info) => {
+      setUpdateInfo(info);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners("update-available");
+    };
+  }, []);
+
+  const handleOpenUpdate = () => {
+    if (updateInfo?.url) {
+      window.open(updateInfo.url, "_blank");
+    }
   };
 
-  const handleCloseSettings = () => {
-    setIsSettingsOpen(false);
-  };
+  const handleConfigure = () => setIsSettingsOpen(true);
+  const handleCloseSettings = () => setIsSettingsOpen(false);
 
   return (
     <div className="header">
@@ -33,13 +47,19 @@ export default function Header() {
       </div>
 
       <div className="header-right">
-        <Button onClick={handleConfigure}>
+        {updateInfo && (
+          <button className="btn update-btn" onClick={handleOpenUpdate} title={`Nova versão ${updateInfo.version} disponível`}>
+            <ArrowDownCircle color="#4ade80" size={20} />
+          </button>
+        )}
+        <button className="btn" onClick={handleConfigure}>
           <SettingsIcon size={18} />
           <span>Configurar</span>
-        </Button>
+        </button>
       </div>
 
       <Settings isOpen={isSettingsOpen} onClose={handleCloseSettings} />
     </div>
   );
 }
+

@@ -72,5 +72,18 @@
         cursor: not-allowed;
       }
     }
+
+    .update-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
   }
 }
