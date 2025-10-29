@@ -30,7 +30,8 @@ main.js - Arquivo principal do Electron.
 
 dist/ - Build final gerado pelo Vite + Electron Builder.
 
-Criando uma nova versão
+## Criando uma nova versão
+
 Quando quiser publicar uma nova versão:
 
 Atualize a versão do projeto (gera commit + tag):

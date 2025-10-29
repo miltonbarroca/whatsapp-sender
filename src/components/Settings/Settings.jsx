@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import MessageInterval from "./MessageInterval/MessageInterval.jsx";
 import "./Settings.scss";
 
 export default function Settings({ isOpen, onClose }) {
@@ -9,6 +10,8 @@ export default function Settings({ isOpen, onClose }) {
         renovacao: ""
     });
     const [messageInterval, setMessageInterval] = useState(60);
+    const [randomize, setRandomize] = useState(false);
+    const [randomVariation, setRandomVariation] = useState(30);
 
     useEffect(() => {
         if (!window.require) return;
@@ -17,6 +20,8 @@ export default function Settings({ isOpen, onClose }) {
         if (isOpen) {
             ipcRenderer.invoke("load-settings").then((settings) => {
                 if (settings.messageInterval) setMessageInterval(settings.messageInterval);
+                if (settings.randomize) setRandomize(settings.randomize);
+                if (settings.randomVariation) setRandomVariation(settings.randomVariation);
             });
 
             ipcRenderer.invoke("load-presets").then((data) => {
@@ -59,7 +64,11 @@ export default function Settings({ isOpen, onClose }) {
             };
 
             await ipcRenderer.invoke("save-presets", payloadPresets);
-            await ipcRenderer.invoke("save-settings", { messageInterval });
+            await ipcRenderer.invoke("save-settings", {
+                messageInterval,
+                randomize,
+                randomVariation
+            });
 
             alert("Presets e configurações salvos com sucesso!");
             onClose();
@@ -69,6 +78,11 @@ export default function Settings({ isOpen, onClose }) {
     };
 
     if (!isOpen) return null;
+
+    const totalMessages = messages[activeTab]
+        .split(/\n\s*---\s*\n/)
+        .map(m => m.trim())
+        .filter(m => m !== "").length;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -85,16 +99,6 @@ export default function Settings({ isOpen, onClose }) {
                 </div>
 
                 <div className="modal-body">
-                    <label className="modal-label">
-                        Intervalo entre mensagens (segundos, mínimo 60)
-                    </label>
-                    <input
-                        type="number"
-                        min={60}
-                        value={messageInterval}
-                        onChange={(e) => setMessageInterval(Math.max(60, parseInt(e.target.value)))}
-                    />
-
                     <label className="modal-label" style={{ marginTop: "1rem" }}>
                         Mensagem de {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
                     </label>
@@ -104,6 +108,16 @@ export default function Settings({ isOpen, onClose }) {
                         onChange={handleChange}
                         placeholder="Escreva as mensagens. Separe variações com uma linha contendo apenas ---"
                         rows={10}
+                    />
+
+                    <MessageInterval
+                        value={messageInterval}
+                        onChange={setMessageInterval}
+                        randomize={randomize}
+                        setRandomize={setRandomize}
+                        randomVariation={randomVariation}
+                        setRandomVariation={setRandomVariation}
+                        totalMessages={totalMessages}
                     />
                 </div>
 

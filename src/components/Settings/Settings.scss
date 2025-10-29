@@ -11,6 +11,9 @@
 }
 
 .modal-content {
+  height: 90vh;
+  overflow-y: auto;
+
   background: #fff;
   border-radius: 8px;
   width: 600px;
@@ -72,8 +75,9 @@
 }
 
 .modal-textarea {
-  width: 100%;
+  width: 96%;
   height: 150px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
