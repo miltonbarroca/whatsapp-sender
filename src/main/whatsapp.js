@@ -7,7 +7,6 @@ const isDev = require("electron-is-dev");
 require("chromedriver");
 
 const userDataDir = path.join(os.homedir(), "WhatsappSenderUserData");
-
 if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
 
 let driver = null;
@@ -19,14 +18,29 @@ async function initDriver() {
   options.addArguments(`--user-data-dir=${userDataDir}`);
   options.addArguments("--start-maximized");
 
-  // Em produção, usar o chromedriver empacotado em resources
-  const resourcesPath = isDev ? process.cwd() : process.resourcesPath;
-  const chromedriverPath = path.join(
-    resourcesPath,
-    "drivers",
-    "chromedriver",
-    "chromedriver.exe"
-  );
+  let chromedriverPath;
+  if (isDev) {
+    chromedriverPath = path.join(
+      process.cwd(),
+      "node_modules",
+      "chromedriver",
+      "lib",
+      "chromedriver",
+      "chromedriver.exe"
+    );
+  } else {
+    chromedriverPath = path.join(
+      process.resourcesPath,
+      "drivers",
+      "chromedriver",
+      "chromedriver.exe"
+    );
+  }
+
+  if (!fs.existsSync(chromedriverPath)) {
+    throw new Error(`chromedriver.exe não encontrado em: ${chromedriverPath}`);
+  }
+
   const service = new chrome.ServiceBuilder(chromedriverPath);
 
   driver = await new Builder()
@@ -37,7 +51,6 @@ async function initDriver() {
 
   await driver.get("https://web.whatsapp.com");
 
-  // Espera QR code ser escaneado na primeira execução
   let qrCodeVisible = true;
   while (qrCodeVisible) {
     try {
@@ -53,8 +66,7 @@ async function initDriver() {
   return driver;
 }
 
-// Envia mensagens
-async function sendMessages(numbers, messages) {
+async function sendMessages(numbers, messages, delaySeconds = 60) {
   const driver = await initDriver();
 
   for (let i = 0; i < numbers.length; i++) {
@@ -67,7 +79,7 @@ async function sendMessages(numbers, messages) {
     const url = `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;
 
     await driver.get(url);
-    await driver.sleep(10000); // espera carregar
+    await driver.sleep(5000); // espera página carregar
 
     let messageBox = null;
     for (let j = 0; j < 10; j++) {
@@ -88,7 +100,7 @@ async function sendMessages(numbers, messages) {
       console.log(`Campo de mensagem não encontrado para ${number}`);
     }
 
-    await driver.sleep(3000);
+    await driver.sleep(delaySeconds * 1000);
   }
 
   console.log("Envio concluído!");

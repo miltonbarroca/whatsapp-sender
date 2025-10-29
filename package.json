@@ -70,7 +70,8 @@
       {
         "provider": "github",
         "owner": "miltonbarroca",
-        "repo": "whatsapp-sender"
+        "repo": "whatsapp-sender",
+        "releaseType": "release"
       }
     ]
   }

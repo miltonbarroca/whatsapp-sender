@@ -8,12 +8,17 @@ export default function Settings({ isOpen, onClose }) {
         prospeccao: "",
         renovacao: ""
     });
+    const [messageInterval, setMessageInterval] = useState(60);
 
     useEffect(() => {
         if (!window.require) return;
         const { ipcRenderer } = window.require("electron");
 
         if (isOpen) {
+            ipcRenderer.invoke("load-settings").then((settings) => {
+                if (settings.messageInterval) setMessageInterval(settings.messageInterval);
+            });
+
             ipcRenderer.invoke("load-presets").then((data) => {
                 const parseMessages = (arr = []) =>
                     arr
@@ -38,7 +43,6 @@ export default function Settings({ isOpen, onClose }) {
         const { ipcRenderer } = window.require("electron");
 
         const buildArray = (text, startId = 1) => {
-            // Separa variações apenas por linha contendo '---'
             const SEPARATOR_REGEX = /\n\s*---\s*\n/g;
             return text
                 .split(SEPARATOR_REGEX)
@@ -47,19 +51,17 @@ export default function Settings({ isOpen, onClose }) {
                 .map((m, index) => ({ id: startId + index, text: m }));
         };
 
-
-
         try {
-            const current = await ipcRenderer.invoke("load-presets");
-
-            const payload = {
+            const payloadPresets = {
                 cobranca: buildArray(messages.cobranca, 1),
                 prospeccao: buildArray(messages.prospeccao, 1),
                 renovacao: buildArray(messages.renovacao, 1)
             };
 
-            await ipcRenderer.invoke("save-presets", payload);
-            alert("Presets salvos com sucesso!");
+            await ipcRenderer.invoke("save-presets", payloadPresets);
+            await ipcRenderer.invoke("save-settings", { messageInterval });
+
+            alert("Presets e configurações salvos com sucesso!");
             onClose();
         } catch (err) {
             alert("Erro ao salvar: " + err.message);
@@ -74,7 +76,7 @@ export default function Settings({ isOpen, onClose }) {
                 <button className="modal-close" onClick={onClose}>×</button>
 
                 <h2 className="modal-title">Configurar Presets de Mensagens</h2>
-                <p className="modal-subtitle">Edite os presets de mensagens que serão usados nos botões</p>
+                <p className="modal-subtitle">Edite os presets de mensagens e o intervalo entre envios</p>
 
                 <div className="modal-tabs">
                     <button className={`tab-btn ${activeTab === "cobranca" ? "active" : ""}`} onClick={() => setActiveTab("cobranca")}>Cobrança</button>
@@ -84,6 +86,16 @@ export default function Settings({ isOpen, onClose }) {
 
                 <div className="modal-body">
                     <label className="modal-label">
+                        Intervalo entre mensagens (segundos, mínimo 60)
+                    </label>
+                    <input
+                        type="number"
+                        min={60}
+                        value={messageInterval}
+                        onChange={(e) => setMessageInterval(Math.max(60, parseInt(e.target.value)))}
+                    />
+
+                    <label className="modal-label" style={{ marginTop: "1rem" }}>
                         Mensagem de {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
                     </label>
                     <textarea
