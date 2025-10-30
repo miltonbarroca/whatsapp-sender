@@ -8,67 +8,71 @@ Este README serve como guia rápido para desenvolvedores que vão trabalhar no p
 
 Para iniciar o projeto em modo de desenvolvimento:
 
+```bash
 npm install
 npm start
+```
 
 Isso irá:
 
-Rodar o Vite para o frontend React.
+* Rodar o **Vite** para o frontend React.
+* Rodar o **Electron** para a interface desktop.
+* Abrir o aplicativo com **hot-reload** para desenvolvimento.
 
-Rodar o Electron para a interface desktop.
+---
 
-Abrir o aplicativo com hot-reload para desenvolvimento.
+## Estrutura de Pastas
 
-Estrutura de Pastas
-src/ - Código-fonte React e scripts do Electron.
+```
+src/                      # Código-fonte React e scripts do Electron
+├── main/whatsapp.js      # Lógica de envio de mensagens via Selenium
+├── components/Presets/   # Presets de mensagens padrão
+main.js                   # Arquivo principal do Electron
+dist/                     # Build final gerado pelo Vite + Electron Builder
+```
 
-src/main/whatsapp.js - Lógica de envio de mensagens via Selenium.
-
-src/components/Presets/ - Presets de mensagens padrão.
-
-main.js - Arquivo principal do Electron.
-
-dist/ - Build final gerado pelo Vite + Electron Builder.
+---
 
 ## Criando uma nova versão
 
 Quando quiser publicar uma nova versão:
 
-Atualize a versão do projeto (gera commit + tag):
+1. Atualize a versão do projeto (gera commit + tag):
 
-npm version patch
-Você também pode usar minor ou major conforme a necessidade.
+   ```bash
+   npm version patch
+   ```
 
-Envie tudo para o GitHub:
+   Você também pode usar `minor` ou `major` conforme a necessidade.
 
-git push && git push --tags
-Isso aciona o workflow do GitHub Actions que:
+2. Envie tudo para o GitHub:
 
-Builda o projeto.
+   ```bash
+   git push && git push --tags
+   ```
 
-Cria o instalador .exe.
+Isso aciona o workflow do **GitHub Actions** que:
 
-Publica a release no GitHub automaticamente.
+* Builda o projeto
+* Cria o instalador `.exe`
+* Publica a release no GitHub automaticamente
 
-Notas de Desenvolvimento
-O app usa Electron + React + Vite.
+---
 
-Mensagens automáticas são enviadas via Selenium WebDriver.
+## Notas de Desenvolvimento
 
-Presets são carregados do userData ou do pacote inicial em src/components/Presets/presets.json.
+* O app usa **Electron + React + Vite**.
+* Mensagens automáticas são enviadas via **Selenium WebDriver**.
+* Presets são carregados do `userData` ou do pacote inicial em
+  `src/components/Presets/presets.json`.
+* Alterações no frontend devem ser refletidas automaticamente com `npm start`.
+* Para adicionar pacotes, use `npm install` normalmente.
 
-Alterações no frontend devem ser refletidas automaticamente com npm start.
+---
 
-Para adicionar pacotes, use npm install normalmente.
+## Contribuindo
 
-Contribuindo
-Faça um fork do projeto.
-
-Crie uma branch para sua feature ou correção.
-
-Teste localmente com npm start.
-
-Abra um Pull Request explicando as alterações.
-
-Contato
-Issues: GitHub Issues
+1. Faça um **fork** do projeto.
+2. Crie uma **branch** para sua feature ou correção.
+3. Teste localmente com `npm start`.
+4. Abra um **Pull Request** explicando as alterações.
