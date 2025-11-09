@@ -4,6 +4,8 @@ const fs = require("fs");
 const isDev = require("electron-is-dev");
 const { sendMessages, closeDriver } = require("./src/main/whatsapp.js");
 const { version } = require("./package.json");
+// Logger
+const { logger } = require("./src/main/logger");
 
 const userDataDir = app.getPath("userData");
 const userPresetsPath = path.join(userDataDir, "presets.json");
@@ -27,7 +29,7 @@ function createWindow() {
     win.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, "dist", "index.html");
-    win.loadFile(indexPath).catch((err) => console.error("Erro ao carregar index.html:", err));
+    win.loadFile(indexPath).catch((err) => logger.error("Erro ao carregar index.html: " + (err && err.message ? err.message : err)));
   }
 }
 
@@ -84,7 +86,7 @@ ipcMain.handle("load-presets", async () => {
     jsonData.renovacao ||= [];
     return jsonData;
   } catch (err) {
-    console.error("Erro ao carregar presets:", err);
+    logger.error("Erro ao carregar presets: " + (err && err.message ? err.message : err));
     return { cobranca: [], prospeccao: [], renovacao: [] };
   }
 });
@@ -95,7 +97,7 @@ ipcMain.handle("save-presets", async (event, newData) => {
     fs.writeFileSync(userPresetsPath, JSON.stringify(newData, null, 2), "utf8");
     return { success: true };
   } catch (err) {
-    console.error("Erro ao salvar presets:", err);
+    logger.error("Erro ao salvar presets: " + (err && err.message ? err.message : err));
     throw err;
   }
 });
@@ -111,7 +113,7 @@ ipcMain.handle("load-settings", async () => {
     const data = fs.readFileSync(userSettingsPath, "utf8");
     return JSON.parse(data);
   } catch (err) {
-    console.error("Erro ao carregar settings:", err);
+    logger.error("Erro ao carregar settings: " + (err && err.message ? err.message : err));
     return { messageInterval: 60 };
   }
 });
@@ -122,7 +124,7 @@ ipcMain.handle("save-settings", async (event, newSettings) => {
     fs.writeFileSync(userSettingsPath, JSON.stringify(newSettings, null, 2), "utf8");
     return { success: true };
   } catch (err) {
-    console.error("Erro ao salvar settings:", err);
+    logger.error("Erro ao salvar settings: " + (err && err.message ? err.message : err));
     throw err;
   }
 });
@@ -137,7 +139,7 @@ ipcMain.handle("send-whatsapp-multiple", async (event, numbers, messages) => {
     await sendMessages(numbers, messages, settings.messageInterval);
     return { success: true };
   } catch (err) {
-    console.error("Erro ao enviar mensagens:", err);
+    logger.error("Erro ao enviar mensagens: " + (err && err.message ? err.message : err));
     return { success: false, error: err.message };
   }
 });

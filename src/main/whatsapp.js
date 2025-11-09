@@ -5,6 +5,7 @@ const path = require("path");
 const os = require("os");
 const isDev = require("electron-is-dev");
 require("chromedriver");
+const { logMessageStatus, logger } = require("./logger");
 
 const userDataDir = path.join(os.homedir(), "WhatsappSenderUserData");
 if (!fs.existsSync(userDataDir)) fs.mkdirSync(userDataDir, { recursive: true });
@@ -55,14 +56,13 @@ async function initDriver() {
   while (qrCodeVisible) {
     try {
       await driver.findElement(By.xpath("//canvas[@aria-label='Scan me!']"));
-      console.log("Aguardando QR code ser escaneado...");
+      logger.info("Aguardando QR code ser escaneado...");
       await new Promise((r) => setTimeout(r, 5000));
     } catch {
       qrCodeVisible = false;
     }
   }
-
-  console.log("Sessão logada");
+  logger.info("Sessão logada");
   return driver;
 }
 
@@ -74,30 +74,36 @@ async function sendMessages(numbers, messages, delaySeconds = 60) {
     const message = messages[i];
 
     if (!number || !message) continue;
+    try {
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const url = `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;
+      await driver.get(url);
+      await driver.sleep(5000); // espera página carregar
 
-    await driver.get(url);
-    await driver.sleep(5000); // espera página carregar
-
-    let messageBox = null;
-    for (let j = 0; j < 10; j++) {
-      try {
-        messageBox = await driver.findElement(
-          By.xpath("//div[@contenteditable='true' and @data-tab='10']")
-        );
-        break;
-      } catch {
-        await driver.sleep(1000);
+      let messageBox = null;
+      for (let j = 0; j < 10; j++) {
+        try {
+          messageBox = await driver.findElement(
+            By.xpath("//div[@contenteditable='true' and @data-tab='10']")
+          );
+          break;
+        } catch {
+          await driver.sleep(1000);
+        }
       }
-    }
 
-    if (messageBox) {
-      await messageBox.sendKeys(Key.ENTER);
-      console.log(`Mensagem enviada para ${number}`);
-    } else {
-      console.log(`Campo de mensagem não encontrado para ${number}`);
+      if (messageBox) {
+        await messageBox.sendKeys(Key.ENTER);
+        logger.info(`Mensagem enviada para ${number}`);
+        logMessageStatus(number, true);
+      } else {
+        logger.warn(`Campo de mensagem não encontrado para ${number}`);
+        logMessageStatus(number, false, 'campo de mensagem não encontrado');
+      }
+    } catch (err) {
+      logger.error(`Erro ao enviar para ${number}: ${err && err.message ? err.message : err}`);
+      logMessageStatus(number, false, err && err.message ? err.message : String(err));
     }
 
     await driver.sleep(delaySeconds * 1000);
@@ -110,7 +116,7 @@ async function closeDriver() {
   if (driver) {
     await driver.quit();
     driver = null;
-    console.log("Driver fechado!");
+    logger.info("Driver fechado!");
   }
 }
 
