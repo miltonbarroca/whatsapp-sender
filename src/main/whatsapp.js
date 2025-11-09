@@ -43,7 +43,6 @@ async function initDriver() {
   }
 
   const service = new chrome.ServiceBuilder(chromedriverPath);
-
   driver = await new Builder()
     .forBrowser("chrome")
     .setChromeOptions(options)
@@ -51,18 +50,38 @@ async function initDriver() {
     .build();
 
   await driver.get("https://web.whatsapp.com");
+  logger.info("Aguardando login no WhatsApp Web...");
 
-  let qrCodeVisible = true;
-  while (qrCodeVisible) {
+  const timeout = 120000; // 2 minutos
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
     try {
-      await driver.findElement(By.xpath("//canvas[@aria-label='Scan me!']"));
-      logger.info("Aguardando QR code ser escaneado...");
-      await new Promise((r) => setTimeout(r, 5000));
-    } catch {
-      qrCodeVisible = false;
+      // Verifica se o QR ainda está visível
+      const qrCanvas = await driver.findElements(
+        By.css("canvas[aria-label='Scan this QR code to link a device!']")
+      );
+
+      if (qrCanvas.length > 0) {
+        logger.info("QR code ainda visível — aguardando escaneamento...");
+      } else {
+        // Verifica se a lista de conversas apareceu (indicador de login)
+        const chatList = await driver.findElements(
+          By.css("div[role='grid'], div[aria-label='Chat list']")
+        );
+        if (chatList.length > 0) {
+          logger.info("Sessão logada com sucesso!");
+          return driver;
+        }
+      }
+    } catch (err) {
+      logger.debug(`Verificação falhou: ${err.message}`);
     }
+
+    await driver.sleep(5000);
   }
-  logger.info("Sessão logada");
+
+  logger.warn("Tempo de login expirou — QR code pode não ter sido escaneado.");
   return driver;
 }
 
