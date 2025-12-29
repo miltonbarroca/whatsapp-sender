@@ -24,9 +24,12 @@ function createWindow() {
     },
   });
 
+  const { Menu } = require("electron");
+  Menu.setApplicationMenu(null);
+
   if (isDev) {
     win.loadURL("http://localhost:5173");
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();  //dev tools aberto em ambiente de desenvolvimento
   } else {
     const indexPath = path.join(__dirname, "dist", "index.html");
     win.loadFile(indexPath).catch((err) => logger.error("Erro ao carregar index.html: " + (err && err.message ? err.message : err)));
