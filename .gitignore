@@ -22,4 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-User_Data/
+# Chromedriver binary (managed by CI or scripts)
+drivers/chromedriver/
+User_Data/ 
