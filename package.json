@@ -1,5 +1,10 @@
 {
   "name": "whatsapp-sender",
+  "description": "Desktop application to send automated WhatsApp messages using Selenium WebDriver",
+  "author": {
+    "name": "Milton Barroca",
+    "email": "miltonbarroca.dev@gmail.com"
+  },
   "private": true,
   "version": "0.0.12",
   "main": "main.js",
