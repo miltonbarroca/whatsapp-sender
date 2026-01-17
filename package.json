@@ -31,7 +31,7 @@
     "baseline-browser-mapping": "^2.9.11",
     "concurrently": "^9.2.1",
     "electron": "^38.2.2",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^23.0.6",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
@@ -61,10 +61,26 @@
         "filter": [
           "**/chromedriver.exe"
         ]
+      },
+      {
+        "from": "node_modules/chromedriver/lib/chromedriver",
+        "to": "drivers/chromedriver",
+        "filter": [
+          "**/chromedriver"
+        ]
       }
     ],
     "win": {
       "target": "nsis"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "deb": {
+      "artifactName": "${name}-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,

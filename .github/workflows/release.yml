@@ -1,4 +1,4 @@
-name: Build & Publish Electron App
+name: Build & Publish
 
 on:
   push:
