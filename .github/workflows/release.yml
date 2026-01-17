@@ -41,9 +41,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Instalar dependências do sistema
-        run: sudo apt-get update && sudo apt-get install -y libxss1 libgconf-2-4
-
       - name: Instalar dependências
         run: npm install
 
