@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
@@ -24,7 +24,30 @@ jobs:
       - name: Instalar dependências
         run: npm install
 
-      - name: Build e publicar app
+      - name: Build e publicar app (Windows)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run release
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências do sistema
+        run: sudo apt-get update && sudo apt-get install -y libxss1 libgconf-2-4
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Build e publicar app (Linux)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run release
