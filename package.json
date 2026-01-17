@@ -1,7 +1,7 @@
 {
   "name": "whatsapp-sender",
   "private": true,
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "main.js",
   "type": "commonjs",
   "scripts": {
