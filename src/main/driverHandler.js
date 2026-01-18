@@ -13,7 +13,7 @@ const chromedriver = require("chromedriver");
    DETECT OS / AppImage
 ========================= */
 const isWin = process.platform === "win32";
-const isAppImage = !!process.env.APPIMAGE; // detecta AppImage
+const isAppImage = !!process.env.APPIMAGE;
 
 /* =========================
    USER DATA DIR
@@ -52,7 +52,7 @@ function killChromeProcessesUsingProfile(profilePath) {
    RESOLVE CHROME PATH
 ========================= */
 function resolveChromeBinaryPath() {
-  if (isDev) return undefined; // usa PATH do dev
+  if (isDev) return undefined; // Selenium pega Chrome do PATH
 
   if (!isWin) {
     const possiblePaths = [
@@ -70,7 +70,7 @@ function resolveChromeBinaryPath() {
     throw new Error("Chrome/Chromium não encontrado em produção!");
   }
 
-  return undefined; // Windows prod, Selenium pega do PATH
+  return undefined; // Windows prod
 }
 
 /* =========================
@@ -110,9 +110,9 @@ async function initDriver() {
   const chromeBinary = resolveChromeBinaryPath();
   if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
 
+  // FLAGS COMUNS
   options.addArguments(
     `--user-data-dir=${userDataDir}`,
-    "--start-maximized",
     "--remote-debugging-port=0",
     "--no-sandbox",
     "--disable-gpu",
@@ -120,9 +120,18 @@ async function initDriver() {
     "--disable-extensions"
   );
 
-  // Se não houver display (servidor) e não for Windows, usar headless
-  if (!process.env.DISPLAY && !isWin) {
+  // HEADLESS OU VISUAL
+  const headless = process.env.FORCE_HEADLESS === "true"; // controle via env
+  if (headless) {
     options.addArguments("--headless=new");
+    logger.info("Rodando Chrome em headless (FORCE_HEADLESS=true).");
+  } else if (!process.env.DISPLAY && !isWin) {
+    options.addArguments("--headless=new");
+    logger.warn("DISPLAY não encontrado, rodando headless.");
+  } else {
+    // Existe DISPLAY -> abre janela visível
+    options.addArguments("--start-maximized");
+    logger.info("Rodando Chrome visível com GUI.");
   }
 
   killChromeProcessesUsingProfile(userDataDir);
