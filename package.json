@@ -20,6 +20,7 @@
     "release": "vite build && electron-builder --publish always"
   },
   "dependencies": {
+    "chromedriver": "^143.0.4",
     "electron-is-dev": "^2.0.0",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
