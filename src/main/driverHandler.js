@@ -1,5 +1,5 @@
 // driverHandler.js
-const { Builder } = require("selenium-webdriver");
+const { Builder, By, Key } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 const path = require("path");
@@ -13,21 +13,14 @@ const chromedriver = require("chromedriver");
    SO / CHROMEDRIVER
 ========================= */
 const isWin = process.platform === "win32";
+const chromedriverBinary = isWin ? "chromedriver.exe" : "chromedriver";
 
 /* =========================
    USER DATA DIR
 ========================= */
 const userDataDir = path.join(os.homedir(), "WhatsappSenderUserData");
-try {
-  if (!fs.existsSync(userDataDir)) {
-    fs.mkdirSync(userDataDir, { recursive: true });
-    fs.chmodSync(userDataDir, 0o700); // garante leitura/escrita
-    logger.info(`Criado userDataDir: ${userDataDir}`);
-  } else {
-    logger.info(`userDataDir já existe: ${userDataDir}`);
-  }
-} catch (err) {
-  logger.error(`Erro ao criar userDataDir: ${err.message}`);
+if (!fs.existsSync(userDataDir)) {
+  fs.mkdirSync(userDataDir, { recursive: true });
 }
 
 /* =========================
@@ -52,9 +45,7 @@ function killChromeProcessesUsingProfile(profilePath) {
         try { process.kill(Number(pid), "SIGKILL"); } catch {}
       }
     }
-  } catch (err) {
-    logger.warn(`Erro ao tentar matar processos do Chrome: ${err.message}`);
-  }
+  } catch {}
 }
 
 /* =========================
@@ -65,18 +56,16 @@ function resolveChromeBinaryPath() {
 
   if (!isWin) {
     const possiblePaths = [
-      "/usr/bin/google-chrome",
-      "/usr/bin/google-chrome-stable",
       "/usr/bin/chromium",
-      "/usr/bin/chromium-browser"
+      "/usr/bin/google-chrome-stable"
     ];
     for (const p of possiblePaths) {
-      if (fs.existsSync(p)) {
+      if (fs.existsSync(p) && fs.statSync(p).size > 10000) { // garante que não é stub
         logger.info(`Chrome/Chromium encontrado em: ${p}`);
         return p;
       }
     }
-    throw new Error("Chrome/Chromium não encontrado em produção!");
+    throw new Error("Chrome/Chromium não encontrado em produção! Instale o Chromium ou Google Chrome.");
   }
 
   return undefined; // Windows prod, Selenium pega do PATH
@@ -116,10 +105,7 @@ async function initDriver() {
 
   const options = new chrome.Options();
   const chromeBinary = resolveChromeBinaryPath();
-  if (chromeBinary) {
-    options.setChromeBinaryPath(chromeBinary);
-    logger.info(`Usando Chrome binary: ${chromeBinary}`);
-  }
+  if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
 
   options.addArguments(
     `--user-data-dir=${userDataDir}`,
@@ -128,16 +114,13 @@ async function initDriver() {
     "--no-sandbox",
     "--disable-gpu",
     "--disable-dev-shm-usage",
-    "--disable-extensions"
+    "--disable-extensions",
+    "--enable-logging",
+    "--v=1"
   );
 
-  // se não tiver display (servidor), use headless
-  if (!process.env.DISPLAY && !isWin) {
-    logger.info("DISPLAY não encontrado, iniciando Chrome em headless");
-    options.addArguments("--headless=new");
-  } else {
-    logger.info(`DISPLAY encontrado: ${process.env.DISPLAY}, Chrome visível`);
-  }
+  // não usar headless, o cliente precisa ver o navegador
+  // se quiser, pode ativar headless manualmente em dev sem DISPLAY
 
   killChromeProcessesUsingProfile(userDataDir);
 
