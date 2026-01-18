@@ -1,5 +1,5 @@
 // driverHandler.js
-const { Builder, By, Key } = require("selenium-webdriver");
+const { Builder } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 const path = require("path");
@@ -10,17 +10,24 @@ const { logger } = require("./logger");
 const chromedriver = require("chromedriver");
 
 /* =========================
-   DETECT OS / AppImage
+   SO / CHROMEDRIVER
 ========================= */
 const isWin = process.platform === "win32";
-const isAppImage = !!process.env.APPIMAGE;
 
 /* =========================
    USER DATA DIR
 ========================= */
 const userDataDir = path.join(os.homedir(), "WhatsappSenderUserData");
-if (!fs.existsSync(userDataDir)) {
-  fs.mkdirSync(userDataDir, { recursive: true });
+try {
+  if (!fs.existsSync(userDataDir)) {
+    fs.mkdirSync(userDataDir, { recursive: true });
+    fs.chmodSync(userDataDir, 0o700); // garante leitura/escrita
+    logger.info(`Criado userDataDir: ${userDataDir}`);
+  } else {
+    logger.info(`userDataDir já existe: ${userDataDir}`);
+  }
+} catch (err) {
+  logger.error(`Erro ao criar userDataDir: ${err.message}`);
 }
 
 /* =========================
@@ -45,14 +52,16 @@ function killChromeProcessesUsingProfile(profilePath) {
         try { process.kill(Number(pid), "SIGKILL"); } catch {}
       }
     }
-  } catch {}
+  } catch (err) {
+    logger.warn(`Erro ao tentar matar processos do Chrome: ${err.message}`);
+  }
 }
 
 /* =========================
    RESOLVE CHROME PATH
 ========================= */
 function resolveChromeBinaryPath() {
-  if (isDev) return undefined; // Selenium pega Chrome do PATH
+  if (isDev) return undefined; // usa PATH do dev
 
   if (!isWin) {
     const possiblePaths = [
@@ -70,7 +79,7 @@ function resolveChromeBinaryPath() {
     throw new Error("Chrome/Chromium não encontrado em produção!");
   }
 
-  return undefined; // Windows prod
+  return undefined; // Windows prod, Selenium pega do PATH
 }
 
 /* =========================
@@ -101,18 +110,20 @@ async function initDriver() {
     throw new Error(`Chromedriver não encontrado: ${chromedriverPath}`);
   }
 
-  // Não fazer chmod em AppImage
-  if (!isWin && !isAppImage) {
+  if (!isWin) {
     try { execSync(`chmod +x "${chromedriverPath}"`); } catch {}
   }
 
   const options = new chrome.Options();
   const chromeBinary = resolveChromeBinaryPath();
-  if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
+  if (chromeBinary) {
+    options.setChromeBinaryPath(chromeBinary);
+    logger.info(`Usando Chrome binary: ${chromeBinary}`);
+  }
 
-  // FLAGS COMUNS
   options.addArguments(
     `--user-data-dir=${userDataDir}`,
+    "--start-maximized",
     "--remote-debugging-port=0",
     "--no-sandbox",
     "--disable-gpu",
@@ -120,18 +131,12 @@ async function initDriver() {
     "--disable-extensions"
   );
 
-  // HEADLESS OU VISUAL
-  const headless = process.env.FORCE_HEADLESS === "true"; // controle via env
-  if (headless) {
+  // se não tiver display (servidor), use headless
+  if (!process.env.DISPLAY && !isWin) {
+    logger.info("DISPLAY não encontrado, iniciando Chrome em headless");
     options.addArguments("--headless=new");
-    logger.info("Rodando Chrome em headless (FORCE_HEADLESS=true).");
-  } else if (!process.env.DISPLAY && !isWin) {
-    options.addArguments("--headless=new");
-    logger.warn("DISPLAY não encontrado, rodando headless.");
   } else {
-    // Existe DISPLAY -> abre janela visível
-    options.addArguments("--start-maximized");
-    logger.info("Rodando Chrome visível com GUI.");
+    logger.info(`DISPLAY encontrado: ${process.env.DISPLAY}, Chrome visível`);
   }
 
   killChromeProcessesUsingProfile(userDataDir);
