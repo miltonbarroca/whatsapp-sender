@@ -35,55 +35,56 @@ function killChromeProcessesUsingProfile(profilePath) {
       const out = execSync(wmicCmd, { encoding: "utf8" });
       const pids = Array.from(out.matchAll(/,(\d+)\r?\n/g)).map(m => m[1]);
       for (const pid of pids) {
-        try {
-          execSync(`taskkill /PID ${pid} /T /F`);
-        } catch {}
+        try { execSync(`taskkill /PID ${pid} /T /F`); } catch {}
       }
     } else {
-      const out = execSync(`pgrep -f "${profilePath}" || true`, {
-        encoding: "utf8",
-      });
-      const pids = out
-        .split(/\r?\n/)
-        .map(s => s.trim())
-        .filter(Boolean);
+      const out = execSync(`pgrep -f "${profilePath}" || true`, { encoding: "utf8" });
+      const pids = out.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
       for (const pid of pids) {
-        try {
-          process.kill(Number(pid), "SIGKILL");
-        } catch {}
+        try { process.kill(Number(pid), "SIGKILL"); } catch {}
       }
     }
   } catch {}
 }
 
 /* =========================
-   DRIVER
+   DRIVER PATH
 ========================= */
-let driver = null;
-
 function resolveChromedriverPath() {
   if (isDev) {
-    return path.join(
-      process.cwd(),
-      "node_modules",
-      "chromedriver",
-      "lib",
-      "chromedriver",
-      chromedriverBinary
-    );
+    return path.join(process.cwd(), "node_modules", "chromedriver", "lib", "chromedriver", chromedriverBinary);
   }
 
-  return path.join(
-    process.resourcesPath,
-    "drivers",
-    "chromedriver",
-    chromedriverBinary
-  );
+  if (!isWin) {
+    // Linux/Arch: usa o chromedriver do sistema
+    return "/usr/bin/chromedriver";
+  }
+
+  // Windows prod
+  return path.join(process.resourcesPath, "drivers", "chromedriver", chromedriverBinary);
+}
+
+/* =========================
+   CHROME BINARY PATH
+========================= */
+function resolveChromeBinaryPath() {
+  if (isDev) {
+    return undefined; // Selenium pega o Chrome do PATH
+  }
+
+  if (!isWin) {
+    return "/usr/bin/chromium"; // Chromium no Linux
+  }
+
+  // Windows prod
+  return undefined;
 }
 
 /* =========================
    INIT DRIVER
 ========================= */
+let driver = null;
+
 async function initDriver() {
   if (driver) {
     try {
@@ -95,19 +96,18 @@ async function initDriver() {
   }
 
   const chromedriverPath = resolveChromedriverPath();
-
   if (!fs.existsSync(chromedriverPath)) {
     throw new Error(`Chromedriver não encontrado: ${chromedriverPath}`);
   }
 
-  // garante permissão no Linux
   if (!isWin) {
-    try {
-      execSync(`chmod +x "${chromedriverPath}"`);
-    } catch {}
+    try { execSync(`chmod +x "${chromedriverPath}"`); } catch {}
   }
 
   const options = new chrome.Options();
+  const chromeBinary = resolveChromeBinaryPath();
+  if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
+
   options.addArguments(`--user-data-dir=${userDataDir}`);
   options.addArguments("--start-maximized");
   options.addArguments("--remote-debugging-port=0");
@@ -134,9 +134,7 @@ async function initDriver() {
 ========================= */
 async function closeDriver() {
   if (driver) {
-    try {
-      await driver.quit();
-    } catch {}
+    try { await driver.quit(); } catch {}
     driver = null;
     logger.info("Driver fechado.");
   }
