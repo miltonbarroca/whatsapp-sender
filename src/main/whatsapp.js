@@ -161,6 +161,9 @@ async function sendMessages(numbers, messages, delaySeconds = 60) {
 
     if (!number || !message) continue;
 
+    console.log("Números recebidos:", numbers);
+    console.log("Mensagens recebidas:", messages);
+
     try {
       const encodedMessage = encodeURIComponent(message);
       const url = `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;

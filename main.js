@@ -4,7 +4,6 @@ const fs = require("fs");
 const isDev = require("electron-is-dev");
 const { sendMessages, closeDriver } = require("./src/main/whatsapp.js");
 const { version } = require("./package.json");
-// Logger
 const { logger } = require("./src/main/logger");
 
 const userDataDir = app.getPath("userData");
@@ -14,6 +13,9 @@ const userSettingsPath = path.join(userDataDir, "settings.json");
 
 let win;
 
+/* =========================
+   CREATE WINDOW
+========================= */
 function createWindow() {
   win = new BrowserWindow({
     width: 1000,
@@ -29,20 +31,23 @@ function createWindow() {
 
   if (isDev) {
     win.loadURL("http://localhost:5173");
-    // win.webContents.openDevTools();  //dev tools aberto em ambiente de desenvolvimento
+    win.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, "dist", "index.html");
-    win.loadFile(indexPath).catch((err) => logger.error("Erro ao carregar index.html: " + (err && err.message ? err.message : err)));
+    win.loadFile(indexPath).catch(err => logger.error("Erro ao carregar index.html: " + (err?.message || err)));
   }
 }
 
+/* =========================
+   CHECK FOR UPDATES
+========================= */
 async function checkForUpdates() {
   const request = net.request("https://api.github.com/repos/miltonbarroca/whatsapp-sender/releases/latest");
 
   return new Promise((resolve, reject) => {
-    request.on("response", (response) => {
+    request.on("response", response => {
       let body = "";
-      response.on("data", (chunk) => body += chunk);
+      response.on("data", chunk => body += chunk);
       response.on("end", () => {
         try {
           const data = JSON.parse(body);
@@ -54,12 +59,15 @@ async function checkForUpdates() {
         } catch (err) { reject(err); }
       });
     });
-    request.on("error", (err) => reject(err));
+    request.on("error", err => reject(err));
     request.setHeader("User-Agent", "Electron-App");
     request.end();
   });
 }
 
+/* =========================
+   APP LIFECYCLE
+========================= */
 app.whenReady().then(() => {
   createWindow();
   setTimeout(checkForUpdates, 5000);
@@ -68,29 +76,40 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => { if (process.platform !== "darwin") app.quit(); });
 app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 
-// Presets
+/* =========================
+   PRESETS CROSS-PLATFORM
+========================= */
 ipcMain.handle("load-presets", async () => {
   try {
     if (!fs.existsSync(userPresetsPath)) {
       const defaultData = fs.existsSync(bundledPresetsPath)
         ? JSON.parse(fs.readFileSync(bundledPresetsPath, "utf8"))
         : {
-          cobranca: ["Olá, estamos entrando em contato sobre sua cobrança pendente."],
-          prospeccao: ["Olá, gostaríamos de apresentar nossos serviços."],
-          renovacao: ["Olá, sua assinatura está prestes a expirar."],
-        };
+            cobranca: [{ text: "Olá, estamos entrando em contato sobre sua cobrança pendente." }],
+            prospeccao: [{ text: "Olá, gostaríamos de apresentar nossos serviços." }],
+            renovacao: [{ text: "Olá, sua assinatura está prestes a expirar." }],
+          };
+
       fs.mkdirSync(userDataDir, { recursive: true });
       fs.writeFileSync(userPresetsPath, JSON.stringify(defaultData, null, 2), "utf8");
     }
+
     const data = fs.readFileSync(userPresetsPath, "utf8");
     const jsonData = JSON.parse(data);
-    jsonData.cobranca ||= [];
-    jsonData.prospeccao ||= [];
-    jsonData.renovacao ||= [];
+
+    // Normaliza objetos {text} → trim da string
+    jsonData.cobranca = (jsonData.cobranca || []).map(m => ({ text: m?.text?.trim() || "" }));
+    jsonData.prospeccao = (jsonData.prospeccao || []).map(m => ({ text: m?.text?.trim() || "" }));
+    jsonData.renovacao = (jsonData.renovacao || []).map(m => ({ text: m?.text?.trim() || "" }));
+
     return jsonData;
   } catch (err) {
-    logger.error("Erro ao carregar presets: " + (err && err.message ? err.message : err));
-    return { cobranca: [], prospeccao: [], renovacao: [] };
+    logger.error("Erro ao carregar presets: " + (err?.message || err));
+    return {
+      cobranca: [],
+      prospeccao: [],
+      renovacao: [],
+    };
   }
 });
 
@@ -100,12 +119,14 @@ ipcMain.handle("save-presets", async (event, newData) => {
     fs.writeFileSync(userPresetsPath, JSON.stringify(newData, null, 2), "utf8");
     return { success: true };
   } catch (err) {
-    logger.error("Erro ao salvar presets: " + (err && err.message ? err.message : err));
+    logger.error("Erro ao salvar presets: " + (err?.message || err));
     throw err;
   }
 });
 
-// Settings
+/* =========================
+   SETTINGS CROSS-PLATFORM
+========================= */
 ipcMain.handle("load-settings", async () => {
   try {
     if (!fs.existsSync(userSettingsPath)) {
@@ -113,10 +134,11 @@ ipcMain.handle("load-settings", async () => {
       fs.writeFileSync(userSettingsPath, JSON.stringify(defaultSettings, null, 2), "utf8");
       return defaultSettings;
     }
+
     const data = fs.readFileSync(userSettingsPath, "utf8");
     return JSON.parse(data);
   } catch (err) {
-    logger.error("Erro ao carregar settings: " + (err && err.message ? err.message : err));
+    logger.error("Erro ao carregar settings: " + (err?.message || err));
     return { messageInterval: 60 };
   }
 });
@@ -127,22 +149,45 @@ ipcMain.handle("save-settings", async (event, newSettings) => {
     fs.writeFileSync(userSettingsPath, JSON.stringify(newSettings, null, 2), "utf8");
     return { success: true };
   } catch (err) {
-    logger.error("Erro ao salvar settings: " + (err && err.message ? err.message : err));
+    logger.error("Erro ao salvar settings: " + (err?.message || err));
     throw err;
   }
 });
 
-// Enviar mensagens
+/* =========================
+   ENVIAR MENSAGENS CROSS-PLATFORM
+========================= */
 ipcMain.handle("send-whatsapp-multiple", async (event, numbers, messages) => {
   try {
     const settings = fs.existsSync(userSettingsPath)
       ? JSON.parse(fs.readFileSync(userSettingsPath, "utf8"))
       : { messageInterval: 60 };
 
+    // Normaliza arrays: remove caracteres não numéricos dos números, trim das mensagens
+    numbers = (numbers || []).map(n => n?.replace(/\D/g, "").trim());
+    messages = (messages || []).map(m => m?.trim());
+
+    if (numbers.length === 0 || messages.length === 0) {
+      throw new Error("Arrays de números ou mensagens estão vazios ou inválidos.");
+    }
+
     await sendMessages(numbers, messages, settings.messageInterval);
     return { success: true };
   } catch (err) {
-    logger.error("Erro ao enviar mensagens: " + (err && err.message ? err.message : err));
+    logger.error("Erro ao enviar mensagens: " + (err?.message || err));
+    return { success: false, error: err.message };
+  }
+});
+
+/* =========================
+   FECHAR DRIVER
+========================= */
+ipcMain.handle("close-driver", async () => {
+  try {
+    await closeDriver();
+    return { success: true };
+  } catch (err) {
+    logger.error("Erro ao fechar driver: " + (err?.message || err));
     return { success: false, error: err.message };
   }
 });
