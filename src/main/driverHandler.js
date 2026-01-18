@@ -7,13 +7,11 @@ const os = require("os");
 const { execSync } = require("child_process");
 const isDev = require("electron-is-dev");
 const { logger } = require("./logger");
-const chromedriver = require("chromedriver");
 
 /* =========================
    SO / CHROMEDRIVER
 ========================= */
 const isWin = process.platform === "win32";
-const chromedriverBinary = isWin ? "chromedriver.exe" : "chromedriver";
 
 /* =========================
    USER DATA DIR
@@ -60,7 +58,7 @@ function resolveChromeBinaryPath() {
       "/usr/bin/google-chrome-stable"
     ];
     for (const p of possiblePaths) {
-      if (fs.existsSync(p) && fs.statSync(p).size > 10000) { // garante que não é stub
+      if (fs.existsSync(p) && fs.statSync(p).size > 10000) {
         logger.info(`Chrome/Chromium encontrado em: ${p}`);
         return p;
       }
@@ -68,7 +66,7 @@ function resolveChromeBinaryPath() {
     throw new Error("Chrome/Chromium não encontrado em produção! Instale o Chromium ou Google Chrome.");
   }
 
-  return undefined; // Windows prod, Selenium pega do PATH
+  return undefined; // Windows prod
 }
 
 /* =========================
@@ -76,7 +74,7 @@ function resolveChromeBinaryPath() {
 ========================= */
 function resolveChromedriverPath() {
   if (isWin) return path.join(__dirname, "chromedriver.exe");
-  return chromedriver.path; // npm chromedriver retorna caminho correto no Linux
+  return "/usr/bin/chromedriver"; // Linux usa binário do sistema
 }
 
 /* =========================
@@ -99,10 +97,6 @@ async function initDriver() {
     throw new Error(`Chromedriver não encontrado: ${chromedriverPath}`);
   }
 
-  if (!isWin) {
-    try { execSync(`chmod +x "${chromedriverPath}"`); } catch {}
-  }
-
   const options = new chrome.Options();
   const chromeBinary = resolveChromeBinaryPath();
   if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
@@ -119,9 +113,8 @@ async function initDriver() {
     "--v=1"
   );
 
-  // não usar headless, o cliente precisa ver o navegador
-  // se quiser, pode ativar headless manualmente em dev sem DISPLAY
-
+  // não usar headless para que o cliente veja o navegador
+  // kill qualquer processo antigo que esteja usando o profile
   killChromeProcessesUsingProfile(userDataDir);
 
   const service = new chrome.ServiceBuilder(chromedriverPath)
