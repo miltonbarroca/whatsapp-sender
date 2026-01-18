@@ -1,4 +1,4 @@
-const { Builder, By, Key } = require("selenium-webdriver");
+const { Builder, By, Key, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 const path = require("path");
@@ -150,44 +150,68 @@ async function initDriver() {
 }
 
 /* =========================
+   DELAY UTIL
+========================= */
+function getDelayMs(settings) {
+  const base = Math.max(60, settings?.delaySeconds ?? 60);
+
+  if (!settings?.randomize) {
+    return base * 1000;
+  }
+
+  const variation = Math.max(0, settings?.randomVariation ?? 0);
+
+  const min = Math.max(60, base - variation);
+  const max = base + variation;
+
+  const randomSeconds =
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+  return randomSeconds * 1000;
+}
+
+/* =========================
    SEND MESSAGES
 ========================= */
-async function sendMessages(numbers, messages, delaySeconds = 60) {
+async function sendMessages(numbers, messages, settings) {
+  
   const activeDriver = await initDriver();
 
   for (let i = 0; i < numbers.length; i++) {
-    const number = numbers[i]?.trim();
-    const message = messages[i];
+    const number = String(numbers[i]).trim();
+    const message = String(messages[i] ?? "").trim();
 
     if (!number || !message) continue;
-
-    console.log("Números recebidos:", numbers);
-    console.log("Mensagens recebidas:", messages);
 
     try {
       const encodedMessage = encodeURIComponent(message);
       const url = `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;
 
       await activeDriver.get(url);
-      await activeDriver.sleep(5000);
 
-      let messageBox = null;
+      const messageBox = await activeDriver.wait(
+        until.elementLocated(
+          By.xpath("//footer//div[@contenteditable='true']")
+        ),
+        20000
+      );
 
-      for (let j = 0; j < 10; j++) {
-        try {
-          messageBox = await activeDriver.findElement(
-            By.xpath("//div[@contenteditable='true']")
-          );
+      let hasText = false;
+      for (let t = 0; t < 20; t++) {
+        const text = await messageBox.getText();
+        if (text && text.length > 0) {
+          hasText = true;
           break;
-        } catch {
-          await activeDriver.sleep(1000);
         }
+        await activeDriver.sleep(300);
       }
 
-      if (!messageBox) {
-        throw new Error("Campo de mensagem não encontrado");
+      if (!hasText) {
+        throw new Error("Mensagem não foi preenchida no campo");
       }
 
+      await messageBox.click();
+      await activeDriver.sleep(300);
       await messageBox.sendKeys(Key.ENTER);
 
       logger.info(`Mensagem enviada para ${number}`);
@@ -198,11 +222,14 @@ async function sendMessages(numbers, messages, delaySeconds = 60) {
       logMessageStatus(number, false, msg);
     }
 
-    await activeDriver.sleep(delaySeconds * 1000);
+    const delayMs = getDelayMs(settings);
+    logger.info(`Delay de ${Math.round(delayMs / 1000)}s`);
+    await activeDriver.sleep(delayMs);
   }
 
   logger.info("Envio concluído!");
 }
+
 
 /* =========================
    CLOSE DRIVER

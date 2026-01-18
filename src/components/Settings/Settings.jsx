@@ -3,129 +3,166 @@ import MessageInterval from "./MessageInterval/MessageInterval.jsx";
 import "./Settings.scss";
 
 export default function Settings({ isOpen, onClose }) {
-    const [activeTab, setActiveTab] = useState("cobranca");
-    const [messages, setMessages] = useState({
-        cobranca: "",
-        prospeccao: "",
-        renovacao: ""
+  const [activeTab, setActiveTab] = useState("cobranca");
+
+  const [messages, setMessages] = useState({
+    cobranca: "",
+    prospeccao: "",
+    renovacao: ""
+  });
+
+  // ✅ NOVO PADRÃO
+  const [delaySeconds, setDelaySeconds] = useState(60);
+  const [randomize, setRandomize] = useState(false);
+  const [randomVariation, setRandomVariation] = useState(30);
+
+  /* =========================
+     LOAD SETTINGS + PRESETS
+  ========================= */
+  useEffect(() => {
+    if (!window.require || !isOpen) return;
+
+    const { ipcRenderer } = window.require("electron");
+
+    ipcRenderer.invoke("load-settings").then((settings) => {
+      setDelaySeconds(
+        settings.delaySeconds ?? settings.messageInterval ?? 60
+      );
+      setRandomize(Boolean(settings.randomize));
+      setRandomVariation(settings.randomVariation ?? 30);
     });
-    const [messageInterval, setMessageInterval] = useState(60);
-    const [randomize, setRandomize] = useState(false);
-    const [randomVariation, setRandomVariation] = useState(30);
 
-    useEffect(() => {
-        if (!window.require) return;
-        const { ipcRenderer } = window.require("electron");
+    ipcRenderer.invoke("load-presets").then((data) => {
+      const parseMessages = (arr = []) =>
+        arr
+          .map((item) => (typeof item === "string" ? item : item.text))
+          .join("\n---\n");
 
-        if (isOpen) {
-            ipcRenderer.invoke("load-settings").then((settings) => {
-                if (settings.messageInterval) setMessageInterval(settings.messageInterval);
-                if (settings.randomize) setRandomize(settings.randomize);
-                if (settings.randomVariation) setRandomVariation(settings.randomVariation);
-            });
+      setMessages({
+        cobranca: parseMessages(data.cobranca),
+        prospeccao: parseMessages(data.prospeccao),
+        renovacao: parseMessages(data.renovacao)
+      });
+    });
+  }, [isOpen]);
 
-            ipcRenderer.invoke("load-presets").then((data) => {
-                const parseMessages = (arr = []) =>
-                    arr
-                        .map((item) => (typeof item === "string" ? item : item.text))
-                        .join("\n---\n");
+  /* =========================
+     HANDLERS
+  ========================= */
+  const handleChange = (e) => {
+    setMessages({ ...messages, [activeTab]: e.target.value });
+  };
 
-                setMessages({
-                    cobranca: parseMessages(data.cobranca),
-                    prospeccao: parseMessages(data.prospeccao),
-                    renovacao: parseMessages(data.renovacao)
-                });
-            });
-        }
-    }, [isOpen]);
+  const handleSave = async () => {
+    if (!window.require) return;
+    const { ipcRenderer } = window.require("electron");
 
-    const handleChange = (e) => {
-        setMessages({ ...messages, [activeTab]: e.target.value });
-    };
-
-    const handleSave = async () => {
-        if (!window.require) return;
-        const { ipcRenderer } = window.require("electron");
-
-        const buildArray = (text, startId = 1) => {
-            const SEPARATOR_REGEX = /\n\s*---\s*\n/g;
-            return text
-                .split(SEPARATOR_REGEX)
-                .map(m => m.trim())
-                .filter(m => m !== "")
-                .map((m, index) => ({ id: startId + index, text: m }));
-        };
-
-        try {
-            const payloadPresets = {
-                cobranca: buildArray(messages.cobranca, 1),
-                prospeccao: buildArray(messages.prospeccao, 1),
-                renovacao: buildArray(messages.renovacao, 1)
-            };
-
-            await ipcRenderer.invoke("save-presets", payloadPresets);
-            await ipcRenderer.invoke("save-settings", {
-                messageInterval,
-                randomize,
-                randomVariation
-            });
-
-            alert("Presets e configurações salvos com sucesso!");
-            onClose();
-        } catch (err) {
-            alert("Erro ao salvar: " + err.message);
-        }
-    };
-
-    if (!isOpen) return null;
-
-    const totalMessages = messages[activeTab]
-        .split(/\n\s*---\s*\n/)
+    const buildArray = (text, startId = 1) => {
+      const SEPARATOR_REGEX = /\n\s*---\s*\n/g;
+      return text
+        .split(SEPARATOR_REGEX)
         .map(m => m.trim())
-        .filter(m => m !== "").length;
+        .filter(Boolean)
+        .map((m, index) => ({ id: startId + index, text: m }));
+    };
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>×</button>
+    try {
+      const payloadPresets = {
+        cobranca: buildArray(messages.cobranca, 1),
+        prospeccao: buildArray(messages.prospeccao, 1),
+        renovacao: buildArray(messages.renovacao, 1)
+      };
 
-                <h2 className="modal-title">Configurar Presets de Mensagens</h2>
-                <p className="modal-subtitle">Edite os presets de mensagens e o intervalo entre envios</p>
+      await ipcRenderer.invoke("save-presets", payloadPresets);
 
-                <div className="modal-tabs">
-                    <button className={`tab-btn ${activeTab === "cobranca" ? "active" : ""}`} onClick={() => setActiveTab("cobranca")}>Cobrança</button>
-                    <button className={`tab-btn ${activeTab === "prospeccao" ? "active" : ""}`} onClick={() => setActiveTab("prospeccao")}>Prospecção</button>
-                    <button className={`tab-btn ${activeTab === "renovacao" ? "active" : ""}`} onClick={() => setActiveTab("renovacao")}>Renovação</button>
-                </div>
+      // ✅ SALVA NO FORMATO OFICIAL
+      await ipcRenderer.invoke("save-settings", {
+        delaySeconds,
+        randomize,
+        randomVariation
+      });
 
-                <div className="modal-body">
-                    <label className="modal-label" style={{ marginTop: "1rem" }}>
-                        Mensagem de {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                    </label>
-                    <textarea
-                        className="modal-textarea"
-                        value={messages[activeTab]}
-                        onChange={handleChange}
-                        placeholder="Escreva as mensagens. Separe variações com uma linha contendo apenas ---"
-                        rows={10}
-                    />
+      alert("Presets e configurações salvos com sucesso!");
+      onClose();
+    } catch (err) {
+      alert("Erro ao salvar: " + err.message);
+    }
+  };
 
-                    <MessageInterval
-                        value={messageInterval}
-                        onChange={setMessageInterval}
-                        randomize={randomize}
-                        setRandomize={setRandomize}
-                        randomVariation={randomVariation}
-                        setRandomVariation={setRandomVariation}
-                        totalMessages={totalMessages}
-                    />
-                </div>
+  if (!isOpen) return null;
 
-                <div className="modal-footer">
-                    <button className="btn cancel" onClick={onClose}>Cancelar</button>
-                    <button className="btn save" onClick={handleSave}>Salvar Presets</button>
-                </div>
-            </div>
+  const totalMessages = messages[activeTab]
+    .split(/\n\s*---\s*\n/)
+    .map(m => m.trim())
+    .filter(Boolean).length;
+
+  /* =========================
+     RENDER
+  ========================= */
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+
+        <h2 className="modal-title">Configurar Presets de Mensagens</h2>
+        <p className="modal-subtitle">
+          Edite os presets de mensagens e o intervalo entre envios
+        </p>
+
+        <div className="modal-tabs">
+          <button
+            className={`tab-btn ${activeTab === "cobranca" ? "active" : ""}`}
+            onClick={() => setActiveTab("cobranca")}
+          >
+            Cobrança
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "prospeccao" ? "active" : ""}`}
+            onClick={() => setActiveTab("prospeccao")}
+          >
+            Prospecção
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "renovacao" ? "active" : ""}`}
+            onClick={() => setActiveTab("renovacao")}
+          >
+            Renovação
+          </button>
         </div>
-    );
+
+        <div className="modal-body">
+          <label className="modal-label" style={{ marginTop: "1rem" }}>
+            Mensagem de {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          </label>
+
+          <textarea
+            className="modal-textarea"
+            value={messages[activeTab]}
+            onChange={handleChange}
+            placeholder="Escreva as mensagens. Separe variações com uma linha contendo apenas ---"
+            rows={10}
+          />
+
+          <MessageInterval
+            value={delaySeconds}
+            onChange={setDelaySeconds}
+            randomize={randomize}
+            setRandomize={setRandomize}
+            randomVariation={randomVariation}
+            setRandomVariation={setRandomVariation}
+            totalMessages={totalMessages}
+          />
+        </div>
+
+        <div className="modal-footer">
+          <button className="btn cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="btn save" onClick={handleSave}>
+            Salvar Presets
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
