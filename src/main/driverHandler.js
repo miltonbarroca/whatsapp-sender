@@ -7,6 +7,7 @@ const os = require("os");
 const { execSync } = require("child_process");
 const isDev = require("electron-is-dev");
 const { logger } = require("./logger");
+const chromedriver = require("chromedriver");
 
 /* =========================
    SO / CHROMEDRIVER
@@ -48,40 +49,40 @@ function killChromeProcessesUsingProfile(profilePath) {
 }
 
 /* =========================
-   DRIVER PATH
-========================= */
-function resolveChromedriverPath() {
-  if (isDev) {
-    return path.join(process.cwd(), "node_modules", "chromedriver", "lib", "chromedriver", chromedriverBinary);
-  }
-
-  if (!isWin) {
-    // Linux/Arch: usa o chromedriver do sistema
-    return "/usr/bin/chromedriver";
-  }
-
-  // Windows prod
-  return path.join(process.resourcesPath, "drivers", "chromedriver", chromedriverBinary);
-}
-
-/* =========================
-   CHROME BINARY PATH
+   RESOLVE CHROME PATH
 ========================= */
 function resolveChromeBinaryPath() {
-  if (isDev) {
-    return undefined; // Selenium pega o Chrome do PATH
-  }
+  if (isDev) return undefined; // usa PATH do dev
 
   if (!isWin) {
-    return "/usr/bin/chromium"; // Chromium no Linux
+    const possiblePaths = [
+      "/usr/bin/google-chrome",
+      "/usr/bin/google-chrome-stable",
+      "/usr/bin/chromium",
+      "/usr/bin/chromium-browser"
+    ];
+    for (const p of possiblePaths) {
+      if (fs.existsSync(p)) {
+        logger.info(`Chrome/Chromium encontrado em: ${p}`);
+        return p;
+      }
+    }
+    throw new Error("Chrome/Chromium não encontrado em produção!");
   }
 
-  // Windows prod
-  return undefined;
+  return undefined; // Windows prod, Selenium pega do PATH
 }
 
 /* =========================
-   INIT DRIVER
+   RESOLVE CHROMEDRIVER PATH
+========================= */
+function resolveChromedriverPath() {
+  if (isWin) return path.join(__dirname, "chromedriver.exe");
+  return chromedriver.path; // npm chromedriver retorna caminho correto no Linux
+}
+
+/* =========================
+   DRIVER INSTANCE
 ========================= */
 let driver = null;
 
@@ -108,17 +109,26 @@ async function initDriver() {
   const chromeBinary = resolveChromeBinaryPath();
   if (chromeBinary) options.setChromeBinaryPath(chromeBinary);
 
-  options.addArguments(`--user-data-dir=${userDataDir}`);
-  options.addArguments("--start-maximized");
-  options.addArguments("--remote-debugging-port=0");
-  options.addArguments("--no-sandbox");
-  options.addArguments("--disable-gpu");
-  options.addArguments("--disable-dev-shm-usage");
-  options.addArguments("--disable-extensions");
+  options.addArguments(
+    `--user-data-dir=${userDataDir}`,
+    "--start-maximized",
+    "--remote-debugging-port=0",
+    "--no-sandbox",
+    "--disable-gpu",
+    "--disable-dev-shm-usage",
+    "--disable-extensions"
+  );
+
+  // se não tiver display (servidor), use headless
+  if (!process.env.DISPLAY && !isWin) {
+    options.addArguments("--headless=new");
+  }
 
   killChromeProcessesUsingProfile(userDataDir);
 
-  const service = new chrome.ServiceBuilder(chromedriverPath);
+  const service = new chrome.ServiceBuilder(chromedriverPath)
+    .loggingTo(path.join(userDataDir, "chromedriver.log"))
+    .enableVerboseLogging();
 
   driver = await new Builder()
     .forBrowser("chrome")
@@ -126,6 +136,7 @@ async function initDriver() {
     .setChromeService(service)
     .build();
 
+  logger.info("Driver inicializado com sucesso.");
   return driver;
 }
 
