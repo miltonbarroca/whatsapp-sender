@@ -10,10 +10,10 @@ const { logger } = require("./logger");
 const chromedriver = require("chromedriver");
 
 /* =========================
-   SO / CHROMEDRIVER
+   DETECT OS / AppImage
 ========================= */
 const isWin = process.platform === "win32";
-const chromedriverBinary = isWin ? "chromedriver.exe" : "chromedriver";
+const isAppImage = !!process.env.APPIMAGE; // detecta AppImage
 
 /* =========================
    USER DATA DIR
@@ -101,7 +101,8 @@ async function initDriver() {
     throw new Error(`Chromedriver não encontrado: ${chromedriverPath}`);
   }
 
-  if (!isWin) {
+  // Não fazer chmod em AppImage
+  if (!isWin && !isAppImage) {
     try { execSync(`chmod +x "${chromedriverPath}"`); } catch {}
   }
 
@@ -119,7 +120,7 @@ async function initDriver() {
     "--disable-extensions"
   );
 
-  // se não tiver display (servidor), use headless
+  // Se não houver display (servidor) e não for Windows, usar headless
   if (!process.env.DISPLAY && !isWin) {
     options.addArguments("--headless=new");
   }
