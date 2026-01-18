@@ -116,6 +116,10 @@ async function initDriver() {
   options.addArguments("--disable-dev-shm-usage");
   options.addArguments("--disable-extensions");
 
+  if (!isWin) {
+    options.setChromeBinaryPath("/usr/bin/chromium");
+  }
+
   killChromeProcessesUsingProfile(userDataDir);
 
   const service = new chrome.ServiceBuilder(chromedriverPath);
