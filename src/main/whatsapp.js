@@ -82,6 +82,20 @@ function resolveChromedriverPath() {
 }
 
 /* =========================
+   RESOLVE CHROME BINARY (LINUX)
+========================= */
+function resolveChromeBinaryPath() {
+  const possiblePaths = [
+    "/opt/google/chrome/chrome",      // google-chrome (AUR)
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium",              // chromium
+    "/usr/lib/chromium/chromium"
+  ];
+
+  return possiblePaths.find(p => fs.existsSync(p));
+}
+
+/* =========================
    INIT DRIVER
 ========================= */
 async function initDriver() {
@@ -108,6 +122,7 @@ async function initDriver() {
   }
 
   const options = new chrome.Options();
+
   options.addArguments(`--user-data-dir=${userDataDir}`);
   options.addArguments("--start-maximized");
   options.addArguments("--remote-debugging-port=0");
@@ -115,6 +130,22 @@ async function initDriver() {
   options.addArguments("--disable-gpu");
   options.addArguments("--disable-dev-shm-usage");
   options.addArguments("--disable-extensions");
+
+  /* =========================
+     CHROME BINARY (LINUX)
+  ========================= */
+  if (!isWin) {
+    const chromeBinary = resolveChromeBinaryPath();
+
+    if (!chromeBinary) {
+      throw new Error(
+        "Chrome/Chromium não encontrado. Instale google-chrome ou chromium."
+      );
+    }
+
+    options.setChromeBinaryPath(chromeBinary);
+    logger.info(`Usando Chrome binary: ${chromeBinary}`);
+  }
 
   killChromeProcessesUsingProfile(userDataDir);
 
@@ -174,7 +205,6 @@ function getDelayMs(settings) {
    SEND MESSAGES
 ========================= */
 async function sendMessages(numbers, messages, settings) {
-  
   const activeDriver = await initDriver();
 
   for (let i = 0; i < numbers.length; i++) {
@@ -229,7 +259,6 @@ async function sendMessages(numbers, messages, settings) {
 
   logger.info("Envio concluído!");
 }
-
 
 /* =========================
    CLOSE DRIVER
