@@ -113,8 +113,13 @@ async function initDriver() {
     "--v=1"
   );
 
-  // não usar headless para que o cliente veja o navegador
-  // kill qualquer processo antigo que esteja usando o profile
+  // Se não existir DISPLAY no Linux, só aí usar headless
+  if (!process.env.DISPLAY && !isWin) {
+    logger.warn("DISPLAY não definido. Chromium vai abrir em headless.");
+    options.addArguments("--headless=new");
+  }
+
+  // mata processos antigos que possam usar o profile
   killChromeProcessesUsingProfile(userDataDir);
 
   const service = new chrome.ServiceBuilder(chromedriverPath)
