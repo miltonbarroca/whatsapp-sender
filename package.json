@@ -6,7 +6,7 @@
     "email": "miltonbarroca.dev@gmail.com"
   },
   "private": true,
-  "version": "0.0.15",
+  "version": "0.0.16",
   "main": "main.js",
   "type": "commonjs",
   "scripts": {
