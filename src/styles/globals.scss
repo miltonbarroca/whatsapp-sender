@@ -7,6 +7,15 @@ body {
   font-size: $fontSizeBase;
   color: $black;
   background-color: $white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Dark mode
+:root.dark-mode {
+  body {
+    color: $darkText;
+    background-color: $darkBg;
+  }
 }
 
 .app-container {

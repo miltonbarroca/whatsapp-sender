@@ -8,6 +8,10 @@
   align-items: center;
   justify-content: center;
   z-index: 50;
+  
+  :root.dark-mode & {
+    background: rgba(0, 0, 0, 0.6);
+  }
 }
 
 .modal-content {
@@ -22,6 +26,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  :root.dark-mode & {
+    background: $darkBgSecondary;
+    color: $darkText;
+  }
 }
 
 .modal-close {
@@ -32,6 +42,7 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
+  color: inherit;
 }
 
 .modal-title {
@@ -44,6 +55,10 @@
   font-size: 14px;
   color: #555;
   margin-bottom: 15px;
+
+  :root.dark-mode & {
+    color: $darkTextSecondary;
+  }
 }
 
 .modal-tabs {
@@ -61,11 +76,22 @@
   font-size: 14px;
   cursor: pointer;
   transition: 0.2s;
+  color: inherit;
+
+  :root.dark-mode & {
+    background: $darkBgTertiary;
+    color: $darkText;
+  }
 }
 
 .tab-btn.active {
   background: #e0e0e0;
   font-weight: 600;
+
+  :root.dark-mode & {
+    background: $darkGreen;
+    color: white;
+  }
 }
 
 .modal-label {
@@ -82,8 +108,84 @@
   border: 1px solid #ccc;
   resize: vertical;
   font-family: inherit;
-
   outline: unset;
+  background: white;
+  color: black;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+  :root.dark-mode & {
+    background: $darkBgTertiary;
+    color: $darkText;
+    border-color: $darkBorder;
+  }
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+
+  :root.dark-mode & {
+    background: $darkBgTertiary;
+  }
+}
+
+.theme-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-toggle {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: #ccc;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 0;
+
+  &.active {
+    background: $greenDark;
+  }
+
+  :root.dark-mode & {
+    background: $darkBorder;
+
+    &.active {
+      background: $darkGreen;
+    }
+  }
+}
+
+.toggle-ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: left 0.3s ease;
+
+  .theme-toggle.active & {
+    left: 27px;
+  }
 }
 
 .modal-footer {
@@ -99,13 +201,24 @@
   border: none;
   cursor: pointer;
   font-weight: 500;
+  transition: background-color 0.2s ease;
 }
 
 .btn.cancel {
   background: #f3f3f3;
+  color: black;
+
+  :root.dark-mode & {
+    background: $darkBgTertiary;
+    color: $darkText;
+  }
 }
 
 .btn.save {
   background: #00a83f;
   color: white;
+
+  &:hover {
+    background: #008a31;
+  }
 }

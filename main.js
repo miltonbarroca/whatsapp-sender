@@ -26,12 +26,14 @@ function createWindow() {
     },
   });
 
+    win.webContents.openDevTools();
+
+
   const { Menu } = require("electron");
   Menu.setApplicationMenu(null);
 
   if (isDev) {
     win.loadURL("http://localhost:5173");
-    win.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, "dist", "index.html");
     win

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Moon } from "lucide-react";
 import MessageInterval from "./MessageInterval/MessageInterval.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 import "./Settings.scss";
 
 export default function Settings({ isOpen, onClose }) {
+  const { isDark, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("cobranca");
 
   const [messages, setMessages] = useState({
@@ -11,7 +14,6 @@ export default function Settings({ isOpen, onClose }) {
     renovacao: ""
   });
 
-  // ✅ NOVO PADRÃO
   const [delaySeconds, setDelaySeconds] = useState(60);
   const [randomize, setRandomize] = useState(false);
   const [randomVariation, setRandomVariation] = useState(30);
@@ -75,7 +77,6 @@ export default function Settings({ isOpen, onClose }) {
 
       await ipcRenderer.invoke("save-presets", payloadPresets);
 
-      // ✅ SALVA NO FORMATO OFICIAL
       await ipcRenderer.invoke("save-settings", {
         delaySeconds,
         randomize,
@@ -152,6 +153,20 @@ export default function Settings({ isOpen, onClose }) {
             setRandomVariation={setRandomVariation}
             totalMessages={totalMessages}
           />
+
+          <div className="theme-toggle-container">
+            <label className="theme-toggle-label">
+              <Moon size={18} />
+              <span>Modo Escuro</span>
+            </label>
+            <button 
+              className={`theme-toggle ${isDark ? "active" : ""}`}
+              onClick={toggleTheme}
+              title="Alternar modo escuro"
+            >
+              <div className="toggle-ball"></div>
+            </button>
+          </div>
         </div>
 
         <div className="modal-footer">

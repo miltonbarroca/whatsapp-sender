@@ -150,7 +150,7 @@ export default function MessageInterval({
         <div className="message-interval-total">
           <div className="total-label">
             <AlertCircle />
-            Tempo estimado
+            <p className="label-text">Tempo estimado</p>
           </div>
           <div>
             <div className="total-value">{calculateTotalTime()}</div>
