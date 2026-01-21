@@ -11,6 +11,20 @@ const bundledDriversDir = path.join(process.cwd(), 'drivers', 'chromedriver');
 const isWin = process.platform === 'win32';
 const binaryName = isWin ? 'chromedriver.exe' : 'chromedriver';
 
+// Proteção TOTAL contra execução em app empacotado
+let isPackaged = false;
+try {
+  if (process.versions.electron) {
+    const { app } = require('electron');
+    isPackaged = app?.isPackaged === true;
+  }
+} catch (_) {}
+
+if (isPackaged) {
+  console.log('Skipping chromedriver update in packaged app');
+  process.exit(0);
+}
+
 async function runInstallScript() {
   return new Promise((resolve, reject) => {
     const installScript = path.join(chromedriverPackagePath, 'install.js');
@@ -18,51 +32,46 @@ async function runInstallScript() {
       return reject(new Error('chromedriver install script not found'));
     }
 
-    // detect_chromedriver_version=true makes the chromedriver package pick the compatible version
-    const env = Object.assign({}, process.env, { detect_chromedriver_version: 'true' });
+    const env = { ...process.env, detect_chromedriver_version: 'true' };
 
-    const proc = spawn(process.execPath, [installScript], { env, stdio: 'inherit' });
+    const proc = spawn(process.execPath, [installScript], {
+      env,
+      stdio: 'inherit'
+    });
 
-    proc.on('error', (err) => reject(err));
-    proc.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error('chromedriver install script exited with code ' + code));
+    proc.on('error', reject);
+    proc.on('close', code => {
+      code === 0
+        ? resolve()
+        : reject(new Error(`chromedriver install exited with code ${code}`));
     });
   });
 }
 
 function copyBinaryToBundled(dirFrom, dirTo) {
   const src = path.join(dirFrom, binaryName);
-  if (!fs.existsSync(src)) throw new Error('Downloaded chromedriver binary not found at: ' + src);
+  if (!fs.existsSync(src)) {
+    throw new Error(`Chromedriver binary not found at ${src}`);
+  }
 
   fs.mkdirSync(dirTo, { recursive: true });
   const dest = path.join(dirTo, binaryName);
   fs.copyFileSync(src, dest);
+
   if (!isWin) {
-    try { fs.chmodSync(dest, 0o755); } catch (e) { /* ignore */ }
+    fs.chmodSync(dest, 0o755);
   }
-  console.log('Chromedriver copied to:', dest);
+
+  console.log('Chromedriver bundled at:', dest);
 }
 
-(async function main() {
+(async () => {
   try {
-    if (!fs.existsSync(chromedriverPackagePath)) {
-      console.warn('chromedriver package not found in node_modules — skipping update.');
-      process.exit(0);
-    }
-
     await runInstallScript();
-
-    if (!fs.existsSync(chromedriverLibPath)) {
-      console.warn('chromedriver lib path not found after install — skipping copy.');
-      process.exit(0);
-    }
-
     copyBinaryToBundled(chromedriverLibPath, bundledDriversDir);
-    console.log('Chromedriver update completed successfully.');
+    console.log('Chromedriver update completed.');
   } catch (err) {
-    console.warn('Chromedriver update failed:', err && err.message ? err.message : err);
-    console.warn('This is non-fatal — the existing bundled chromedriver (if any) will remain as-is.');
+    console.warn('Chromedriver update skipped:', err.message);
     process.exit(0);
   }
 })();

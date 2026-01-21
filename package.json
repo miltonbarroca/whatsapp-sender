@@ -10,14 +10,12 @@
   "main": "main.js",
   "type": "commonjs",
   "scripts": {
-    "prestart": "npm run update-chromedriver --silent",
-    "postinstall": "node ./scripts/update-chromedriver.js",
-    "update-chromedriver": "node ./scripts/update-chromedriver.js",
     "dev": "vite",
     "electron": "electron .",
     "start": "concurrently \"npm run dev\" \"npm run electron\"",
+    "prebuild": "node ./scripts/update-chromedriver.js",
     "build": "vite build && electron-builder",
-    "release": "vite build && electron-builder --publish always"
+    "release": "npm run prebuild && vite build && electron-builder --publish always"
   },
   "dependencies": {
     "chromedriver": "^143.0.4",
@@ -61,28 +59,16 @@
     ],
     "extraResources": [
       {
-        "from": "node_modules/chromedriver/lib/chromedriver",
+        "from": "drivers/chromedriver",
         "to": "drivers/chromedriver",
-        "filter": [
-          "**/chromedriver.exe"
-        ]
-      },
-      {
-        "from": "node_modules/chromedriver/lib/chromedriver",
-        "to": "drivers/chromedriver",
-        "filter": [
-          "**/chromedriver"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "win": {
       "target": "nsis"
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "target": ["deb"]
     },
     "deb": {
       "artifactName": "${name}-${version}.${ext}"
