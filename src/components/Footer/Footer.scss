@@ -1,0 +1,23 @@
+@use '../../styles/variables' as *;
+
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid #eee;
+  margin-top: 12px;
+  font-size: 13px;
+
+  :root.dark-mode & {
+    border-top-color: $darkBorder;
+  }
+}
+
+.link-btn {
+  background: transparent;
+  border: none;
+  color: #0b5fff;
+  cursor: pointer;
+  font-weight: 500;
+}

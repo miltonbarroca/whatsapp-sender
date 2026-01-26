@@ -155,7 +155,8 @@ ipcMain.handle("load-settings", async () => {
       const defaultSettings = {
         delaySeconds: 60,
         randomize: false,
-        randomVariation: 0
+        randomVariation: 0,
+        acceptedTerms: false
       };
       fs.writeFileSync(
         userSettingsPath,
@@ -172,24 +173,31 @@ ipcMain.handle("load-settings", async () => {
     return {
       delaySeconds: data.delaySeconds ?? data.messageInterval ?? 60,
       randomize: Boolean(data.randomize),
-      randomVariation: data.randomVariation ?? 0
+      randomVariation: data.randomVariation ?? 0,
+      acceptedTerms: Boolean(data.acceptedTerms)
     };
   } catch (err) {
     logger.error("Erro ao carregar settings: " + (err?.message || err));
     return {
       delaySeconds: 60,
       randomize: false,
-      randomVariation: 0
+      randomVariation: 0,
+      acceptedTerms: false
     };
   }
 });
 
 ipcMain.handle("save-settings", async (_, newSettings) => {
   try {
+    const rawSettings = fs.existsSync(userSettingsPath)
+      ? JSON.parse(fs.readFileSync(userSettingsPath, "utf8"))
+      : {};
+
     const normalizedSettings = {
-      delaySeconds: Math.max(60, newSettings.delaySeconds ?? 60),
-      randomize: Boolean(newSettings.randomize),
-      randomVariation: Math.max(0, newSettings.randomVariation ?? 0)
+      delaySeconds: Math.max(60, newSettings.delaySeconds ?? rawSettings.delaySeconds ?? 60),
+      randomize: Boolean(newSettings.randomize ?? rawSettings.randomize),
+      randomVariation: Math.max(0, newSettings.randomVariation ?? rawSettings.randomVariation ?? 0),
+      acceptedTerms: Boolean(newSettings.acceptedTerms ?? rawSettings.acceptedTerms ?? false)
     };
 
     fs.mkdirSync(userDataDir, { recursive: true });
