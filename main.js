@@ -13,9 +13,8 @@ const userSettingsPath = path.join(userDataDir, "settings.json");
 
 let win;
 
-/* =========================
-   CREATE WINDOW
-========================= */
+//CREATE WINDOW
+
 function createWindow() {
   win = new BrowserWindow({
     width: 1000,
@@ -26,14 +25,17 @@ function createWindow() {
     },
   });
 
-    win.webContents.openDevTools();
-
-
   const { Menu } = require("electron");
   Menu.setApplicationMenu(null);
 
   if (isDev) {
-    win.loadURL("http://localhost:5173");
+    win
+      .loadURL("http://localhost:5173")
+      .catch(err => logger.error("Erro ao carregar dev server: " + (err?.message || err)));
+
+    win.webContents.once("did-finish-load", () => {
+      win.webContents.openDevTools();
+    });
   } else {
     const indexPath = path.join(__dirname, "dist", "index.html");
     win
@@ -44,9 +46,8 @@ function createWindow() {
   }
 }
 
-/* =========================
-   CHECK FOR UPDATES
-========================= */
+//CHECK FOR UPDATES
+
 async function checkForUpdates() {
   const request = net.request(
     "https://api.github.com/repos/miltonbarroca/whatsapp-sender/releases/latest"
@@ -78,9 +79,9 @@ async function checkForUpdates() {
   });
 }
 
-/* =========================
-   APP LIFECYCLE
-========================= */
+
+//APP LIFECYCLE
+
 app.whenReady().then(() => {
   createWindow();
   setTimeout(checkForUpdates, 5000);
@@ -94,9 +95,9 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
-/* =========================
-   PRESETS
-========================= */
+
+//PRESETS
+
 ipcMain.handle("load-presets", async () => {
   try {
     if (!fs.existsSync(userPresetsPath)) {
@@ -146,9 +147,8 @@ ipcMain.handle("save-presets", async (_, newData) => {
   }
 });
 
-/* =========================
-   SETTINGS (PADRÃO NOVO)
-========================= */
+// SETTINGS (PADRÃO NOVO)
+
 ipcMain.handle("load-settings", async () => {
   try {
     if (!fs.existsSync(userSettingsPath)) {
@@ -214,9 +214,8 @@ ipcMain.handle("save-settings", async (_, newSettings) => {
   }
 });
 
-/* =========================
-   ENVIAR MENSAGENS
-========================= */
+//ENVIAR MENSAGENS
+
 ipcMain.handle("send-whatsapp-multiple", async (_, numbers, messages) => {
   try {
     const rawSettings = fs.existsSync(userSettingsPath)
@@ -244,9 +243,8 @@ ipcMain.handle("send-whatsapp-multiple", async (_, numbers, messages) => {
   }
 });
 
-/* =========================
-   FECHAR DRIVER
-========================= */
+//FECHAR DRIVER
+
 ipcMain.handle("close-driver", async () => {
   try {
     await closeDriver();
