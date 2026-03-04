@@ -114,7 +114,6 @@ async function buildWithSeleniumManager(options) {
     .build();
 }
 
-
 //INIT DRIVER
 
 async function initDriver() {
