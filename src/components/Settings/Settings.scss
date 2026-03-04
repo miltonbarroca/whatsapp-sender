@@ -126,6 +126,70 @@
   gap: 15px;
 }
 
+.settings-media-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-media-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+
+  :root.dark-mode & {
+    border-color: $darkBorder;
+  }
+}
+
+.settings-media-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.settings-media-name {
+  font-size: 13px;
+  color: #666;
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :root.dark-mode & {
+    color: $darkTextSecondary;
+  }
+}
+
+.settings-clear-media-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: rgba($red, 0.15);
+  color: $redDark;
+}
+
+.settings-media-hint {
+  font-size: 12px;
+  color: #666;
+
+  :root.dark-mode & {
+    color: $darkTextSecondary;
+  }
+}
+
 .theme-toggle-container {
   display: flex;
   align-items: center;

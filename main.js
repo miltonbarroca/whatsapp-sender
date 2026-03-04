@@ -156,7 +156,12 @@ ipcMain.handle("load-settings", async () => {
         delaySeconds: 60,
         randomize: false,
         randomVariation: 0,
-        acceptedTerms: false
+        acceptedTerms: false,
+        mediaByPreset: {
+          cobranca: "",
+          prospeccao: "",
+          renovacao: ""
+        }
       };
       fs.writeFileSync(
         userSettingsPath,
@@ -174,7 +179,12 @@ ipcMain.handle("load-settings", async () => {
       delaySeconds: data.delaySeconds ?? data.messageInterval ?? 60,
       randomize: Boolean(data.randomize),
       randomVariation: data.randomVariation ?? 0,
-      acceptedTerms: Boolean(data.acceptedTerms)
+      acceptedTerms: Boolean(data.acceptedTerms),
+      mediaByPreset: {
+        cobranca: data.mediaByPreset?.cobranca ?? "",
+        prospeccao: data.mediaByPreset?.prospeccao ?? "",
+        renovacao: data.mediaByPreset?.renovacao ?? ""
+      }
     };
   } catch (err) {
     logger.error("Erro ao carregar settings: " + (err?.message || err));
@@ -182,7 +192,12 @@ ipcMain.handle("load-settings", async () => {
       delaySeconds: 60,
       randomize: false,
       randomVariation: 0,
-      acceptedTerms: false
+      acceptedTerms: false,
+      mediaByPreset: {
+        cobranca: "",
+        prospeccao: "",
+        renovacao: ""
+      }
     };
   }
 });
@@ -197,7 +212,12 @@ ipcMain.handle("save-settings", async (_, newSettings) => {
       delaySeconds: Math.max(60, newSettings.delaySeconds ?? rawSettings.delaySeconds ?? 60),
       randomize: Boolean(newSettings.randomize ?? rawSettings.randomize),
       randomVariation: Math.max(0, newSettings.randomVariation ?? rawSettings.randomVariation ?? 0),
-      acceptedTerms: Boolean(newSettings.acceptedTerms ?? rawSettings.acceptedTerms ?? false)
+      acceptedTerms: Boolean(newSettings.acceptedTerms ?? rawSettings.acceptedTerms ?? false),
+      mediaByPreset: {
+        cobranca: String(newSettings.mediaByPreset?.cobranca ?? rawSettings.mediaByPreset?.cobranca ?? "").trim(),
+        prospeccao: String(newSettings.mediaByPreset?.prospeccao ?? rawSettings.mediaByPreset?.prospeccao ?? "").trim(),
+        renovacao: String(newSettings.mediaByPreset?.renovacao ?? rawSettings.mediaByPreset?.renovacao ?? "").trim()
+      }
     };
 
     fs.mkdirSync(userDataDir, { recursive: true });
@@ -216,7 +236,7 @@ ipcMain.handle("save-settings", async (_, newSettings) => {
 
 //ENVIAR MENSAGENS
 
-ipcMain.handle("send-whatsapp-multiple", async (_, numbers, messages) => {
+ipcMain.handle("send-whatsapp-multiple", async (_, numbers, messages, mediaPath) => {
   try {
     const rawSettings = fs.existsSync(userSettingsPath)
       ? JSON.parse(fs.readFileSync(userSettingsPath, "utf8"))
@@ -235,7 +255,9 @@ ipcMain.handle("send-whatsapp-multiple", async (_, numbers, messages) => {
       throw new Error("Arrays de números ou mensagens estão vazios.");
     }
 
-    await sendMessages(numbers, messages, settings);
+    await sendMessages(numbers, messages, settings, {
+      mediaPath: typeof mediaPath === "string" ? mediaPath.trim() : ""
+    });
     return { success: true };
   } catch (err) {
     logger.error("Erro ao enviar mensagens: " + (err?.message || err));

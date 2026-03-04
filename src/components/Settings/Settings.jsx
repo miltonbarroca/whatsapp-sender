@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Moon } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Moon, Paperclip, X } from "lucide-react";
 import MessageInterval from "./MessageInterval/MessageInterval.jsx";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
 import "./Settings.scss";
@@ -17,10 +17,15 @@ export default function Settings({ isOpen, onClose }) {
   const [delaySeconds, setDelaySeconds] = useState(60);
   const [randomize, setRandomize] = useState(false);
   const [randomVariation, setRandomVariation] = useState(30);
+  const [mediaByPreset, setMediaByPreset] = useState({
+    cobranca: "",
+    prospeccao: "",
+    renovacao: ""
+  });
+  const mediaInputRef = useRef(null);
 
-  /* =========================
-     LOAD SETTINGS + PRESETS
-  ========================= */
+  //LOAD SETTINGS + PRESETS
+
   useEffect(() => {
     if (!window.require || !isOpen) return;
 
@@ -32,6 +37,11 @@ export default function Settings({ isOpen, onClose }) {
       );
       setRandomize(Boolean(settings.randomize));
       setRandomVariation(settings.randomVariation ?? 30);
+      setMediaByPreset({
+        cobranca: settings.mediaByPreset?.cobranca ?? "",
+        prospeccao: settings.mediaByPreset?.prospeccao ?? "",
+        renovacao: settings.mediaByPreset?.renovacao ?? ""
+      });
     });
 
     ipcRenderer.invoke("load-presets").then((data) => {
@@ -48,9 +58,9 @@ export default function Settings({ isOpen, onClose }) {
     });
   }, [isOpen]);
 
-  /* =========================
-     HANDLERS
-  ========================= */
+
+  //HANDLERS
+
   const handleChange = (e) => {
     setMessages({ ...messages, [activeTab]: e.target.value });
   };
@@ -80,7 +90,8 @@ export default function Settings({ isOpen, onClose }) {
       await ipcRenderer.invoke("save-settings", {
         delaySeconds,
         randomize,
-        randomVariation
+        randomVariation,
+        mediaByPreset
       });
 
       alert("Presets e configurações salvos com sucesso!");
@@ -90,6 +101,43 @@ export default function Settings({ isOpen, onClose }) {
     }
   };
 
+  const openMediaPicker = () => {
+    mediaInputRef.current?.click();
+  };
+
+  const clearMedia = () => {
+    setMediaByPreset(prev => ({
+      ...prev,
+      [activeTab]: ""
+    }));
+    if (mediaInputRef.current) {
+      mediaInputRef.current.value = "";
+    }
+  };
+
+  const handleMediaChange = (event) => {
+    const file = event.target?.files?.[0];
+    if (!file) return;
+
+    const absolutePath = file.path || "";
+    if (!absolutePath) {
+      alert("Não foi possível obter o caminho do arquivo selecionado.");
+      return;
+    }
+
+    setMediaByPreset(prev => ({
+      ...prev,
+      [activeTab]: absolutePath
+    }));
+  };
+
+  const getMediaName = (mediaPath) => {
+    const value = String(mediaPath || "");
+    if (!value) return "";
+    const chunks = value.split(/[/\\]/);
+    return chunks[chunks.length - 1] || value;
+  };
+
   if (!isOpen) return null;
 
   const totalMessages = messages[activeTab]
@@ -97,10 +145,9 @@ export default function Settings({ isOpen, onClose }) {
     .map(m => m.trim())
     .filter(Boolean).length;
 
-  /* =========================
-     RENDER
-  ========================= */
-  return (
+    //RENDER
+
+    return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
@@ -143,6 +190,40 @@ export default function Settings({ isOpen, onClose }) {
             placeholder="Escreva as mensagens. Separe variações com uma linha contendo apenas ---"
             rows={10}
           />
+
+          <div className="settings-media-picker">
+            <label className="modal-label">Mídia do preset ({activeTab})</label>
+            <input
+              ref={mediaInputRef}
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleMediaChange}
+              style={{ display: "none" }}
+            />
+
+            <button className="settings-media-btn" type="button" onClick={openMediaPicker}>
+              <Paperclip size={16} />
+              <span>Anexar imagem/vídeo</span>
+            </button>
+
+            {mediaByPreset[activeTab] ? (
+              <div className="settings-media-selected">
+                <span className="settings-media-name">{getMediaName(mediaByPreset[activeTab])}</span>
+                <button
+                  className="settings-clear-media-btn"
+                  type="button"
+                  onClick={clearMedia}
+                  title="Remover mídia"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <span className="settings-media-hint">
+                Sem anexo neste preset. Será enviado somente texto.
+              </span>
+            )}
+          </div>
 
           <MessageInterval
             value={delaySeconds}

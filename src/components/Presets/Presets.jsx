@@ -53,7 +53,16 @@ export default function Presets({ onSelectPreset }) {
         console.log("Mensagens:", messages);
 
         try {
-            const result = await ipcRenderer.invoke("send-whatsapp-multiple", numbers, messages);
+            const settings = await ipcRenderer.invoke("load-settings");
+            const mediaByPreset = settings?.mediaByPreset || {};
+            const mediaPath = String(mediaByPreset[presetName] || "").trim();
+
+            const result = await ipcRenderer.invoke(
+                "send-whatsapp-multiple",
+                numbers,
+                messages,
+                mediaPath || ""
+            );
             if (result.success) alert("Mensagens enviadas!");
             else alert("Erro: " + result.error);
         } catch (err) {
