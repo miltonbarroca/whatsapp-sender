@@ -44,7 +44,7 @@
   },
   "build": {
     "appId": "com.miltonbarroca.whatsapp-sender",
-    "productName": "WhatsApp Sender",
+    "productName": "WhatsAppSender",
     "files": [
       "dist/**/*",
       "main.js",
@@ -61,6 +61,7 @@
       "target": "nsis"
     },
     "linux": {
+      "executableName": "whatsapp-sender",
       "target": [
         "deb"
       ]
