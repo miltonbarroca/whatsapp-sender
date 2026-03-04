@@ -20,6 +20,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+
+      - name: Cache Electron (Windows)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\AppData\Local\electron\Cache
+            ~\AppData\Local\electron-builder\Cache
+          key: ${{ runner.os }}-electron-tools-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-tools-
 
       - name: Instalar dependências
         run: npm install
@@ -27,7 +38,17 @@ jobs:
       - name: Build e publicar app (Windows)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run release:win
+          ELECTRON_CACHE: C:\Users\runneradmin\AppData\Local\electron\Cache
+          ELECTRON_BUILDER_CACHE: C:\Users\runneradmin\AppData\Local\electron-builder\Cache
+        run: |
+          for ($i = 1; $i -le 3; $i++) {
+            npm run release:win
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            Write-Host "Tentativa $i falhou. Repetindo em 20s..."
+            Start-Sleep -Seconds 20
+          }
+          Write-Host "Falhou após 3 tentativas."
+          exit 1
 
   build-linux:
     runs-on: ubuntu-latest
