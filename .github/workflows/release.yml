@@ -27,7 +27,7 @@ jobs:
       - name: Build e publicar app (Windows)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run release
+        run: npm run release:win
 
   build-linux:
     runs-on: ubuntu-latest
@@ -47,4 +47,4 @@ jobs:
       - name: Build e publicar app (Linux)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run release
+        run: npm run release:linux

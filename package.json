@@ -14,7 +14,9 @@
     "electron": "electron .",
     "start": "concurrently \"npm run dev\" \"npm run electron\"",
     "build": "vite build && electron-builder",
-    "release": "vite build && electron-builder --publish always"
+    "release": "vite build && electron-builder --publish always",
+    "release:win": "vite build && electron-builder --win nsis --publish always",
+    "release:linux": "vite build && electron-builder --linux deb --publish always"
   },
   "dependencies": {
     "electron-is-dev": "^2.0.0",
