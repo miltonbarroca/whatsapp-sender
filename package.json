@@ -13,12 +13,10 @@
     "dev": "vite",
     "electron": "electron .",
     "start": "concurrently \"npm run dev\" \"npm run electron\"",
-    "prebuild": "node ./scripts/update-chromedriver.js",
     "build": "vite build && electron-builder",
-    "release": "npm run prebuild && vite build && electron-builder --publish always"
+    "release": "vite build && electron-builder --publish always"
   },
   "dependencies": {
-    "chromedriver": "^143.0.4",
     "electron-is-dev": "^2.0.0",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
@@ -56,15 +54,6 @@
     },
     "asarUnpack": [
       "node_modules/selenium-webdriver/bin/**"
-    ],
-    "extraResources": [
-      {
-        "from": "drivers/chromedriver",
-        "to": "drivers/chromedriver",
-        "filter": [
-          "**/*"
-        ]
-      }
     ],
     "license": "assets/license.rtf",
     "win": {
