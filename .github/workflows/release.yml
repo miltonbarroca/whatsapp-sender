@@ -40,6 +40,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+
+      - name: Cache Electron
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/electron
+          key: ${{ runner.os }}-electron-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-
 
       - name: Instalar dependências
         run: npm install
@@ -47,4 +56,12 @@ jobs:
       - name: Build e publicar app (Linux)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run release:linux
+          ELECTRON_CACHE: ~/.cache/electron
+        run: |
+          for i in 1 2 3; do
+            npm run release:linux && exit 0
+            echo "Tentativa $i falhou. Repetindo em 15s..."
+            sleep 15
+          done
+          echo "Falhou após 3 tentativas."
+          exit 1
