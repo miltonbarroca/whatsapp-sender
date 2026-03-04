@@ -55,7 +55,6 @@
     "asarUnpack": [
       "node_modules/selenium-webdriver/bin/**"
     ],
-    "license": "assets/license.rtf",
     "win": {
       "target": "nsis"
     },
@@ -70,7 +69,8 @@
     "nsis": {
       "oneClick": false,
       "perMachine": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "license": "assets/license.rtf"
     },
     "publish": [
       {
