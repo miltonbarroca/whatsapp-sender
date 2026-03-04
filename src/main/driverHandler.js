@@ -72,21 +72,77 @@ function buildChromeOptions() {
   return options;
 }
 
+function getSeleniumManagerPlatformParts() {
+  if (process.platform === "win32") {
+    return { folder: "windows", binary: "selenium-manager.exe" };
+  }
+  if (process.platform === "darwin") {
+    return { folder: "macos", binary: "selenium-manager" };
+  }
+  return { folder: "linux", binary: "selenium-manager" };
+}
+
+function resolvePackagedSeleniumManagerPath() {
+  const resourcesPath = process.resourcesPath;
+  if (!resourcesPath) return "";
+
+  const { folder, binary } = getSeleniumManagerPlatformParts();
+  const candidate = path.join(
+    resourcesPath,
+    "app.asar.unpacked",
+    "node_modules",
+    "selenium-webdriver",
+    "bin",
+    folder,
+    binary
+  );
+
+  return fs.existsSync(candidate) ? candidate : "";
+}
+
 async function buildWithSeleniumManager(options) {
   const seleniumCacheDir = path.join(userDataDir, "selenium-cache");
   fs.mkdirSync(seleniumCacheDir, { recursive: true });
 
-  const { driverPath, browserPath } = binaryPaths([
-    "--browser",
-    "chrome",
-    "--language-binding",
-    "javascript",
-    "--output",
-    "json",
-    "--skip-driver-in-path",
-    "--cache-path",
-    seleniumCacheDir,
-  ]);
+  const managerPath = resolvePackagedSeleniumManagerPath();
+  const previousManagerPath = process.env.SE_MANAGER_PATH;
+
+  if (managerPath) {
+    process.env.SE_MANAGER_PATH = managerPath;
+    if (!isWin) {
+      try {
+        execSync(`chmod +x "${managerPath}"`);
+      } catch {}
+    }
+  }
+
+  let resolvedPaths;
+  try {
+    resolvedPaths = binaryPaths([
+      "--browser",
+      "chrome",
+      "--language-binding",
+      "javascript",
+      "--output",
+      "json",
+      "--skip-driver-in-path",
+      "--cache-path",
+      seleniumCacheDir,
+    ]);
+  } catch (err) {
+    const hint = managerPath ? ` (SE_MANAGER_PATH=${managerPath})` : "";
+    throw new Error(`Falha ao resolver driver com Selenium Manager${hint}: ${err?.message || err}`);
+  } finally {
+    if (managerPath) {
+      if (previousManagerPath) {
+        process.env.SE_MANAGER_PATH = previousManagerPath;
+      } else {
+        delete process.env.SE_MANAGER_PATH;
+      }
+    }
+  }
+
+  const { driverPath, browserPath } = resolvedPaths;
 
   if (!driverPath) {
     throw new Error("Selenium Manager não retornou driverPath.");

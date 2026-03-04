@@ -32,8 +32,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-tools-
 
-      - name: Instalar dependências
-        run: npm install
+      - name: Instalar dependências (Windows, retry)
+        env:
+          ELECTRON_CACHE: C:\Users\runneradmin\AppData\Local\electron\Cache
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+          for ($i = 1; $i -le 3; $i++) {
+            npm install
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            Write-Host "npm install falhou na tentativa $i. Repetindo em 20s..."
+            Start-Sleep -Seconds 20
+          }
+          Write-Host "npm install falhou após 3 tentativas."
+          exit 1
 
       - name: Build e publicar app (Windows)
         env:
@@ -71,8 +85,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-
 
-      - name: Instalar dependências
-        run: npm install
+      - name: Instalar dependências (Linux, retry)
+        env:
+          ELECTRON_CACHE: ~/.cache/electron
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+          for i in 1 2 3; do
+            npm install && exit 0
+            echo "npm install falhou na tentativa $i. Repetindo em 20s..."
+            sleep 20
+          done
+          echo "npm install falhou após 3 tentativas."
+          exit 1
 
       - name: Build e publicar app (Linux)
         env:
