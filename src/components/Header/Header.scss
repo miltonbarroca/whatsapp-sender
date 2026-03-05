@@ -102,5 +102,15 @@
       }
     }
 
+    .bug-btn {
+      border-color: #d14343;
+      color: #d14343;
+
+      :root.dark-mode & {
+        border-color: #f87171;
+        color: #fca5a5;
+      }
+    }
+
   }
 }

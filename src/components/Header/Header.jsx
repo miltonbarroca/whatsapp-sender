@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowDownCircle, MessageSquare, Settings as SettingsIcon } from "lucide-react";
+import { ArrowDownCircle, Bug, MessageSquare, Settings as SettingsIcon } from "lucide-react";
 import Settings from "../Settings/Settings";
 import "./Header.scss";
 
@@ -14,11 +14,28 @@ const Button = ({ children, className = "", ...props }) => (
 export default function Header() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [updateInfo, setUpdateInfo] = useState(null);
+  const [appInfo, setAppInfo] = useState({
+    version: "desconhecida",
+    platform: "desconhecida",
+    arch: "desconhecida"
+  });
 
   useEffect(() => {
     ipcRenderer.on("update-available", (event, info) => {
       setUpdateInfo(info);
     });
+
+    ipcRenderer
+      .invoke("get-app-info")
+      .then((info) => {
+        if (!info) return;
+        setAppInfo({
+          version: info.version || "desconhecida",
+          platform: info.platform || "desconhecida",
+          arch: info.arch || "desconhecida"
+        });
+      })
+      .catch(() => {});
 
     return () => {
       ipcRenderer.removeAllListeners("update-available");
@@ -33,6 +50,36 @@ export default function Header() {
 
   const handleConfigure = () => setIsSettingsOpen(true);
   const handleCloseSettings = () => setIsSettingsOpen(false);
+
+  const handleReportBug = () => {
+    const title = encodeURIComponent("[Bug] Descreva o problema");
+    const body = encodeURIComponent(
+      [
+        "## Descrição",
+        "Descreva claramente o erro encontrado.",
+        "",
+        "## Passos para reproduzir",
+        "1. ...",
+        "2. ...",
+        "3. ...",
+        "",
+        "## Comportamento esperado",
+        "O que deveria acontecer?",
+        "",
+        "## Logs / Erro",
+        "Cole aqui mensagens de erro relevantes.",
+        "",
+        "## Ambiente",
+        `- Versão do app: ${appInfo.version}`,
+        `- Plataforma: ${appInfo.platform}`,
+        `- Arquitetura: ${appInfo.arch}`
+      ].join("\n")
+    );
+
+    const labels = encodeURIComponent("bug");
+    const issueUrl = `https://github.com/miltonbarroca/whatsapp-sender/issues/new?labels=${labels}&title=${title}&body=${body}`;
+    window.open(issueUrl, "_blank");
+  };
 
   return (
     <div className="header">
@@ -56,10 +103,13 @@ export default function Header() {
           <SettingsIcon size={18} />
           <span>Configurar</span>
         </button>
+        <button className="btn bug-btn" onClick={handleReportBug}>
+          <Bug size={18} />
+          <span>Reportar bug</span>
+        </button>
       </div>
 
       <Settings isOpen={isSettingsOpen} onClose={handleCloseSettings} />
     </div>
   );
 }
-

@@ -95,6 +95,16 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
+// APP INFO
+
+ipcMain.handle("get-app-info", async () => {
+  return {
+    version,
+    platform: process.platform,
+    arch: process.arch
+  };
+});
+
 
 //PRESETS
 
